@@ -7,11 +7,6 @@ Controller::Controller()
 Controller::~Controller()
 {}
 
-void Controller::setDefaultFigure(Figure::FigureTypes figureType)
-{
-    Model::instanse().setCurrentFigureType(figureType);
-}
-
 void Controller::setDefaultColor(QColor color)
 {
     auto settings = Model::instanse().currentSettings();
@@ -19,9 +14,9 @@ void Controller::setDefaultColor(QColor color)
     Model::instanse().setCurrentSettings(settings);
 }
 
-void Controller::addFigure(std::shared_ptr<Figure> figure)
+void Controller::addRect(std::shared_ptr<Rectangle> rect)
 {
-    Model::instanse().addFigure(figure);
+    Model::instanse().addRect(rect);
 }
 
 void Controller::changeCurrentDepthColor(int currentDepthColor)

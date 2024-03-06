@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include "figure.h"
+#include "rectangle.h"
 
 #include <memory>
 
@@ -15,11 +15,9 @@ public:
     Controller& operator=(Controller&&) = delete;
     ~Controller();
 
-    void setDefaultFigure(Figure::FigureTypes figureType);
-
     void setDefaultColor(QColor color);
 
-    void addFigure(std::shared_ptr<Figure> figure);
+    void addRect(std::shared_ptr<Rectangle> rect);
 
     void changeCurrentDepthColor(int currentDepthColor);
 

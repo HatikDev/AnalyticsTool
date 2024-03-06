@@ -1,14 +1,99 @@
-#include "model.h"
 #include "rectangle.h"
 
+#include <QPen>
 #include <QPainter>
 
-Rectangle::Rectangle(std::string name, QPointF point, QObject *parent)
-    : Figure{name, point, Model::instanse().currentSettings(), parent}
-{}
+Rectangle::Rectangle(std::string name, QPointF point,
+               RectangleGraphicSettings graphicSettings, QObject *parent)
+    : QObject{parent}, QGraphicsItem()
+    , m_name{name}
+    , m_graphicSettings{ graphicSettings }
+    , m_isSelected{ false }
+{
+    setStartPoint(mapFromScene(point));
+    setEndPoint(mapFromScene(point));
+    /* Подключаем сигнал изменения координат к слоту запуска обновления содержимого объекта
+     * Сигнал и слот присутствуют в базовом классе
+     * */
+    connect(this, &Rectangle::pointChanged, this, &Rectangle::updateRomb);
+}
 
 Rectangle::~Rectangle()
-{}
+{
+
+}
+
+std::string Rectangle::name() const
+{
+    return m_name;
+}
+
+void Rectangle::setName(const std::string& name)
+{
+    m_name = name;
+}
+
+QPointF Rectangle::startPoint() const
+{
+    return m_startPoint;
+}
+
+QPointF Rectangle::endPoint() const
+{
+    return m_endPoint;
+}
+
+void Rectangle::setStartPoint(QPointF point)
+{
+    m_startPoint = mapFromScene( point ) ;
+    emit pointChanged() ;
+}
+
+void Rectangle::setEndPoint(QPointF point)
+{
+    m_endPoint = mapFromScene( point ) ;
+    emit pointChanged();
+}
+
+RectangleGraphicSettings Rectangle::graphicSettings() const
+{
+    return m_graphicSettings;
+}
+
+void Rectangle::setGraphicSettings(RectangleGraphicSettings settings)
+{
+    m_graphicSettings = settings;
+}
+
+void Rectangle::select()
+{
+    m_isSelected = true;
+
+    emit rectSelected();
+}
+
+void Rectangle::deselect()
+{
+    m_isSelected = false;
+
+    emit rectDeselected();
+}
+
+void Rectangle::updateRomb()
+{
+    update((endPoint().x() > startPoint().x() ? startPoint().x() : endPoint().x()) - 5,
+                 (endPoint().y() > startPoint().y() ? startPoint().y() : endPoint().y()) - 5,
+                 qAbs(endPoint().x() - startPoint().x()) + 10,
+                 qAbs(endPoint().y() - startPoint().y()) + 10);
+}
+
+QRectF Rectangle::boundingRect() const
+{
+    return QRectF((endPoint().x() > startPoint().x() ? startPoint().x() : endPoint().x()) - 5,
+                  (endPoint().y() > startPoint().y() ? startPoint().y() : endPoint().y()) - 5,
+                  qAbs(endPoint().x() - startPoint().x()) + 10,
+                  qAbs(endPoint().y() - startPoint().y()) + 10);
+}
 
 void Rectangle::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
@@ -29,3 +114,10 @@ void Rectangle::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     Q_UNUSED(widget)
 }
 
+RectangleGraphicSettings::RectangleGraphicSettings(QColor color, size_t depthColor)
+    : m_color{color}
+    , m_depthColor{depthColor}
+{}
+
+RectangleGraphicSettings::~RectangleGraphicSettings()
+{}

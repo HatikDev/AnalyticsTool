@@ -13,52 +13,41 @@ Model& Model::instanse()
     return *m_instanse;
 }
 
-const std::vector<std::shared_ptr<Figure>>& Model::figures() const
+const std::vector<std::shared_ptr<Rectangle>>& Model::rects() const
 {
-    return m_figures;
+    return m_rects;
 }
 
-void Model::addFigure(std::shared_ptr<Figure> figure)
+void Model::addRect(std::shared_ptr<Rectangle> rect)
 {
-    m_figures.push_back(figure);
+    m_rects.push_back(rect);
 
     //    emit figureAdded(figure);
 }
 
-void Model::setCurrentSettings(const FigureGraphicSettings &settings)
+void Model::setCurrentSettings(const RectangleGraphicSettings &settings)
 {
     m_currentSettings = settings;
 }
 
-FigureGraphicSettings Model::currentSettings() const
+RectangleGraphicSettings Model::currentSettings() const
 {
     return m_currentSettings;
 }
 
-Figure::FigureTypes Model::currentFigureType() const
+std::shared_ptr<Rectangle> Model::rectByName(const std::string &name) const
 {
-    return m_currentFigureType;
-}
-
-std::shared_ptr<Figure> Model::figureByName(const std::string &name) const
-{
-    for (auto& obj : m_figures)
+    for (auto& obj : m_rects)
         if (name == obj->name())
             return obj;
 
     throw std::logic_error("456"); // TODO: change error type
 }
 
-void Model::setCurrentFigureType(Figure::FigureTypes figureType)
-{
-    m_currentFigureType = figureType;
-}
-
 Model::Model(QObject* parent)
     : QObject(parent)
-    , m_figures{}
+    , m_rects{}
     , m_currentSettings{Qt::black, 5}
-    , m_currentFigureType{ Figure::FigureTypes::rectangle }
 {
     m_instanse = this;
 }

@@ -1,11 +1,9 @@
 #pragma once
 
-#include "figure.h"
+#include "rectangle.h"
 
 #include <memory>
 #include <vector>
-
-using FigureTypes = Figure::FigureTypes;
 
 class Model : public QObject {
     Q_OBJECT
@@ -19,32 +17,26 @@ public:
 
     static Model& instanse();
 
-    const std::vector<std::shared_ptr<Figure>>& figures() const;
+    const std::vector<std::shared_ptr<Rectangle>>& rects() const;
 
-    void addFigure(std::shared_ptr<Figure> figure);
+    void addRect(std::shared_ptr<Rectangle> rect);
 
     //void editFigure(std::shared_ptr<Figure> figure);
 
     //void deleteFigure();
 
-    void setCurrentSettings(const FigureGraphicSettings& settings);
+    void setCurrentSettings(const RectangleGraphicSettings& settings);
 
-    FigureGraphicSettings currentSettings() const;
+    RectangleGraphicSettings currentSettings() const;
 
-    void setCurrentFigureType(Figure::FigureTypes figureType);
-
-    Figure::FigureTypes currentFigureType() const;
-
-    std::shared_ptr<Figure> figureByName(const std::string& name) const;
+    std::shared_ptr<Rectangle> rectByName(const std::string& name) const;
 
 private:
     static Model* m_instanse;
 
-    std::vector<std::shared_ptr<Figure>> m_figures;
+    std::vector<std::shared_ptr<Rectangle>> m_rects;
 
-    FigureGraphicSettings m_currentSettings;
-
-    FigureTypes m_currentFigureType;
+    RectangleGraphicSettings m_currentSettings;
 
     Model(QObject* parent = nullptr);
 

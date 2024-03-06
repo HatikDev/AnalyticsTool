@@ -15,18 +15,14 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql)
 
 set(PROJECT_SOURCES
-    figure.cpp
-    figure.h
+    rectangle.cpp
+    rectangle.h
     main.cpp
     mainwindow.cpp
     mainwindow.h
     mainwindow.ui
     paintscene.h
     paintscene.cpp
-    rectangle.cpp
-    rectangle.h
-    circle.cpp
-    circle.h
     model.cpp
     model.h
     controller.cpp

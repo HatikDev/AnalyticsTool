@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "figure.h"
+#include "rectangle.h"
 #include "paintscene.h"
 
 #include <QMainWindow>
@@ -34,13 +34,11 @@ private:
 public slots:
 
 private slots:
-    void on_rectangleButton_clicked();
-    void on_circleButton_clicked();
     void on_selectColorButton_clicked();
-    void on_figuresListWidget_itemClicked(QListWidgetItem *item);
-    void on_figuresListWidget_itemDoubleClicked(QListWidgetItem *item);
+    void on_rectsListWidget_itemClicked(QListWidgetItem *item);
+    void on_rectsListWidget_itemDoubleClicked(QListWidgetItem *item);
 
-    void on_figureAdded(std::shared_ptr<Figure> figure);
+    void on_rectAdded(std::shared_ptr<Rectangle> rect);
     void on_updateButton_clicked();
     void on_spinBox_valueChanged(int value);
 

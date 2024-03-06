@@ -4,7 +4,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <memory>
-#include "figure.h"
+#include "rectangle.h"
 
 class PaintScene : public QGraphicsScene
 {
@@ -15,11 +15,11 @@ public:
      ~PaintScene();
 
 signals:
-    void currentFigureChanged(); // TODO: maybe it should be deleted
-    void figureAdded(std::shared_ptr<Figure> figure);
+    void currentRectChanged(); // TODO: maybe it should be deleted
+    void rectAdded(std::shared_ptr<Rectangle> figure);
 
 private:
-    std::shared_ptr<Figure> m_current;
+    std::shared_ptr<Rectangle> m_current;
 
     static size_t counter;
 
@@ -28,7 +28,7 @@ private:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
 
 private slots:
-    void figureSelectionChanged();
+    void rectSelectionChanged();
 };
 
 #endif // PAINTSCENE_H

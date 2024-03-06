@@ -22,26 +22,16 @@ MainWindow::MainWindow(QWidget* parent)
     ui->mainGraphicsView->setScene(m_paintScene);
     ui->mainGraphicsView->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
-    ui->figuresListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->figuresListWidget, &QListWidget::customContextMenuRequested,
+    ui->rectsListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->rectsListWidget, &QListWidget::customContextMenuRequested,
             this, &MainWindow::provideContextMenu);
 
-    connect(m_paintScene, &PaintScene::figureAdded, this, &MainWindow::on_figureAdded);
+    connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::on_rectangleButton_clicked()
-{
-    m_controller.setDefaultFigure(Figure::FigureTypes::rectangle);
-}
-
-void MainWindow::on_circleButton_clicked()
-{
-    m_controller.setDefaultFigure(Figure::FigureTypes::circle);
 }
 
 void MainWindow::on_selectColorButton_clicked()
@@ -51,57 +41,57 @@ void MainWindow::on_selectColorButton_clicked()
     m_controller.setDefaultColor(color);
 }
 
-void MainWindow::on_figuresListWidget_itemClicked(QListWidgetItem *item)
+void MainWindow::on_rectsListWidget_itemClicked(QListWidgetItem *item)
 {
     auto elementName = item->text();
 
     try {
-        auto& figures = Model::instanse().figures();
-        for (auto& obj : figures)
+        auto& rects = Model::instanse().rects();
+        for (auto& obj : rects)
             obj->deselect();
 
-        auto figure = Model::instanse().figureByName(elementName.toStdString());
-        figure->select();
+        auto rect = Model::instanse().rectByName(elementName.toStdString());
+        rect->select();
 
         ui->mainGraphicsView->update();
     } catch (...) {
         QMessageBox::critical(this, tr("Analytics tool v2"),
-                                       tr("Failed to find figure"),
+                                       tr("Failed to find rectangle"),
                                        QMessageBox::Ok,
                                        QMessageBox::Ok);
     }
 }
 
-void MainWindow::on_figuresListWidget_itemDoubleClicked(QListWidgetItem *item)
+void MainWindow::on_rectsListWidget_itemDoubleClicked(QListWidgetItem *item)
 {
 
 }
 
-void MainWindow::on_figureAdded(std::shared_ptr<Figure> figure)
+void MainWindow::on_rectAdded(std::shared_ptr<Rectangle> rect)
 {
-    m_controller.addFigure(figure);
+    m_controller.addRect(rect);
 
     QPixmap pixmap(10, 10);
-    pixmap.fill(figure->graphicSettings().color());
+    pixmap.fill(rect->graphicSettings().color());
 
-    QListWidgetItem* item = new QListWidgetItem(QIcon(pixmap), figure->name().c_str());
+    QListWidgetItem* item = new QListWidgetItem(QIcon(pixmap), rect->name().c_str());
     item->setFlags(item->flags() | Qt::ItemIsEditable);
-    ui->figuresListWidget->addItem(item);
+    ui->rectsListWidget->addItem(item);
 }
 
 void MainWindow::on_updateButton_clicked()
 {
     // TODO: clear data
-    ui->figuresListWidget->clear();
+    ui->rectsListWidget->clear();
 
-    auto& list = Model::instanse().figures();
+    auto& list = Model::instanse().rects();
     for (auto& obj : list)
     {
         QPixmap pixmap(10, 10);
         pixmap.fill(obj->graphicSettings().color());
 
         QListWidgetItem* item = new QListWidgetItem(QIcon(pixmap), obj->name().c_str());
-        ui->figuresListWidget->addItem(item);
+        ui->rectsListWidget->addItem(item);
     }
     ui->mainGraphicsView->update();
 }
@@ -113,7 +103,7 @@ void MainWindow::on_spinBox_valueChanged(int value)
 
 void MainWindow::provideContextMenu(const QPoint& pos)
 {
-    QPoint item = ui->figuresListWidget->mapToGlobal(pos);
+    QPoint item = ui->rectsListWidget->mapToGlobal(pos);
     QMenu submenu;
     submenu.addAction("edit");
     submenu.addAction("delete");
