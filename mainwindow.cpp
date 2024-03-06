@@ -1,4 +1,3 @@
-#include "listobjectsviewcontroller.h"
 #include "mainwindow.h"
 #include "model.h"
 #include "./ui_mainwindow.h"

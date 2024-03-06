@@ -29,8 +29,6 @@ set(PROJECT_SOURCES
     circle.h
     model.cpp
     model.h
-    listobjectsviewcontroller.cpp
-    listobjectsviewcontroller.h
     controller.cpp
     controller.h
 )

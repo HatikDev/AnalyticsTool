@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include "figure.h"
-#include "listobjectsviewcontroller.h"
 #include "paintscene.h"
 
 #include <QMainWindow>
