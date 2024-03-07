@@ -1,12 +1,15 @@
+#include "constants.h"
 #include "rectangle.h"
 
 #include <QPen>
 #include <QPainter>
+#include <qdrawutil.h>
+#include <QPalette>
 
 Rectangle::Rectangle(std::string name, QPointF point,
-               RectangleGraphicSettings graphicSettings, QObject *parent)
-    : QObject{parent}, QGraphicsItem()
-    , m_name{name}
+    RectangleGraphicSettings graphicSettings, QObject* parent)
+    : QObject{ parent }, QGraphicsItem()
+    , m_name{ name }
     , m_graphicSettings{ graphicSettings }
     , m_isSelected{ false }
 {
@@ -45,13 +48,13 @@ QPointF Rectangle::endPoint() const
 
 void Rectangle::setStartPoint(QPointF point)
 {
-    m_startPoint = mapFromScene( point ) ;
-    emit pointChanged() ;
+    m_startPoint = mapFromScene(point);
+    emit pointChanged();
 }
 
 void Rectangle::setEndPoint(QPointF point)
 {
-    m_endPoint = mapFromScene( point ) ;
+    m_endPoint = mapFromScene(point);
     emit pointChanged();
 }
 
@@ -82,41 +85,57 @@ void Rectangle::deselect()
 void Rectangle::updateRomb()
 {
     update((endPoint().x() > startPoint().x() ? startPoint().x() : endPoint().x()) - 5,
-                 (endPoint().y() > startPoint().y() ? startPoint().y() : endPoint().y()) - 5,
-                 qAbs(endPoint().x() - startPoint().x()) + 10,
-                 qAbs(endPoint().y() - startPoint().y()) + 10);
+        (endPoint().y() > startPoint().y() ? startPoint().y() : endPoint().y()) - 5,
+        qAbs(endPoint().x() - startPoint().x()) + 10,
+        qAbs(endPoint().y() - startPoint().y()) + 10);
 }
 
 QRectF Rectangle::boundingRect() const
 {
     return QRectF((endPoint().x() > startPoint().x() ? startPoint().x() : endPoint().x()) - 5,
-                  (endPoint().y() > startPoint().y() ? startPoint().y() : endPoint().y()) - 5,
-                  qAbs(endPoint().x() - startPoint().x()) + 10,
-                  qAbs(endPoint().y() - startPoint().y()) + 10);
+        (endPoint().y() > startPoint().y() ? startPoint().y() : endPoint().y()) - 5,
+        qAbs(endPoint().x() - startPoint().x()) + 10,
+        qAbs(endPoint().y() - startPoint().y()) + 10);
 }
 
-void Rectangle::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void Rectangle::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     QPen pen;
     if (m_isSelected) {
         pen = QPen(m_graphicSettings.color(), m_graphicSettings.depthColor(),
-              Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+            Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     }
     else {
         pen = QPen(m_graphicSettings.color(), m_graphicSettings.depthColor(),
-              Qt::DashDotLine, Qt::RoundCap, Qt::RoundJoin);
+            Qt::DashDotLine, Qt::RoundCap, Qt::RoundJoin);
     }
     painter->setPen(pen);
 
-    painter->drawRect({ m_startPoint, m_endPoint });
+    painter->drawRect(QRect{ m_startPoint.toPoint(), m_endPoint.toPoint() });
+
+    if (m_isSelected) {
+        painter->fillRect({ m_startPoint, m_endPoint },
+                          { m_graphicSettings.color(), Qt::BDiagPattern });
+
+        QPoint p1({ m_startPoint.toPoint().x(), m_startPoint.toPoint().y() });
+        QPoint p2({ m_startPoint.toPoint().x(), m_endPoint.toPoint().y() });
+        QPoint p3({ m_endPoint.toPoint().x(), m_startPoint.toPoint().y() });
+        QPoint p4({ m_endPoint.toPoint().x(), m_endPoint.toPoint().y() });
+
+        painter->setBrush(m_graphicSettings.color());
+        painter->drawEllipse(p1, kSelectionCircleRadius, kSelectionCircleRadius);
+        painter->drawEllipse(p2, kSelectionCircleRadius, kSelectionCircleRadius);
+        painter->drawEllipse(p3, kSelectionCircleRadius, kSelectionCircleRadius);
+        painter->drawEllipse(p4, kSelectionCircleRadius, kSelectionCircleRadius);
+    }
 
     Q_UNUSED(option)
-    Q_UNUSED(widget)
+        Q_UNUSED(widget)
 }
 
 RectangleGraphicSettings::RectangleGraphicSettings(QColor color, size_t depthColor)
-    : m_color{color}
-    , m_depthColor{depthColor}
+    : m_color{ color }
+    , m_depthColor{ depthColor }
 {}
 
 RectangleGraphicSettings::~RectangleGraphicSettings()

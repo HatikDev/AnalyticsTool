@@ -27,6 +27,7 @@ set(PROJECT_SOURCES
     model.h
     controller.cpp
     controller.h
+    constants.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
