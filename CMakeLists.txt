@@ -30,6 +30,8 @@ set(PROJECT_SOURCES
     constants.h
     picture.h
     picture.cpp
+    dataset.h
+    dataset.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

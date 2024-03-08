@@ -24,14 +24,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void loadDataset(const std::string& path);
+
 private:
     Ui::MainWindow *ui;
 
     Controller m_controller;
 
     PaintScene* m_paintScene;
-
-public slots:
 
 private slots:
     void on_selectColorButton_clicked();
@@ -43,5 +43,8 @@ private slots:
     void on_spinBox_valueChanged(int value);
 
     void provideContextMenu(const QPoint& pos);
+
+    void on_prevButton_clicked();
+    void on_nextButton_clicked();
 };
 #endif // MAINWINDOW_H

@@ -25,13 +25,9 @@ private:
 
     static size_t counter;
 
-    Picture m_picture;
-
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
-
-    void loadImage(const std::string& path, const std::string labelName);
 
 private slots:
     void rectSelectionChanged();

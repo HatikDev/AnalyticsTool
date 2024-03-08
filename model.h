@@ -1,5 +1,6 @@
 #pragma once
 
+#include "dataset.h"
 #include "picture.h"
 #include "rectangle.h"
 
@@ -18,9 +19,11 @@ public:
 
     static Model& instanse();
 
-    const Picture& picture() const;
+    Picture& picture();
 
-    // TODO: add setting picture
+    void setPicture(const Picture& picture);
+
+    Dataset& dataset();
 
     void addRect(std::shared_ptr<Rectangle> rect);
 
@@ -30,10 +33,14 @@ public:
 
     RectangleGraphicSettings currentSettings() const;
 
+    void loadDataset(const std::string& path);
+
 private:
     static Model* m_instanse;
 
     Picture m_picture;
+
+    Dataset m_dataset;
 
     RectangleGraphicSettings m_currentSettings;
 

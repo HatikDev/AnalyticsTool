@@ -23,12 +23,44 @@
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="controlLayout" stretch="0,0">
+     <layout class="QVBoxLayout" name="mainControlLayout" stretch="0,0,0">
       <property name="sizeConstraint">
        <enum>QLayout::SetDefaultConstraint</enum>
       </property>
       <item>
        <widget class="QListWidget" name="rectsListWidget"/>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="controlLayout">
+        <item>
+         <widget class="QLineEdit" name="pictureName">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="prevNextLayout">
+          <item>
+           <widget class="QPushButton" name="prevButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>&lt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="nextButton">
+            <property name="text">
+             <string>&gt;</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0">

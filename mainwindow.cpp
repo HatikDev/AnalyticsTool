@@ -24,14 +24,24 @@ MainWindow::MainWindow(QWidget* parent)
 
     ui->rectsListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->rectsListWidget, &QListWidget::customContextMenuRequested,
-            this, &MainWindow::provideContextMenu);
+        this, &MainWindow::provideContextMenu);
 
     connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
+
+    loadDataset("C:/Users/Sergey/Documents/cpp/AnalyticsTool/build/Debug/data");
+
+    // TODO: remove this
+    ui->pictureName->setText(Model::instanse().dataset().currentName().c_str());
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::loadDataset(const std::string& path)
+{
+    m_controller.loadDataset(path);
 }
 
 void MainWindow::on_selectColorButton_clicked()
@@ -41,7 +51,7 @@ void MainWindow::on_selectColorButton_clicked()
     m_controller.setDefaultColor(color);
 }
 
-void MainWindow::on_rectsListWidget_itemClicked(QListWidgetItem *item)
+void MainWindow::on_rectsListWidget_itemClicked(QListWidgetItem* item)
 {
     auto elementName = item->text();
 
@@ -54,15 +64,16 @@ void MainWindow::on_rectsListWidget_itemClicked(QListWidgetItem *item)
         rect->select();
 
         ui->mainGraphicsView->update();
-    } catch (...) {
+    }
+    catch (...) {
         QMessageBox::critical(this, tr("Analytics tool v2"),
-                                       tr("Failed to find rectangle"),
-                                       QMessageBox::Ok,
-                                       QMessageBox::Ok);
+            tr("Failed to find rectangle"),
+            QMessageBox::Ok,
+            QMessageBox::Ok);
     }
 }
 
-void MainWindow::on_rectsListWidget_itemDoubleClicked(QListWidgetItem *item)
+void MainWindow::on_rectsListWidget_itemDoubleClicked(QListWidgetItem* item)
 {
 
 }
@@ -116,4 +127,30 @@ void MainWindow::provideContextMenu(const QPoint& pos)
 
         }
     }
+}
+
+void MainWindow::on_prevButton_clicked()
+{
+    try {
+        m_controller.previousPicture();
+    }
+    catch (...) {
+        ui->prevButton->setEnabled(false);
+    }
+
+    ui->pictureName->setText(Model::instanse().picture().name().c_str());
+    ui->nextButton->setEnabled(true);
+}
+
+void MainWindow::on_nextButton_clicked()
+{
+    try {
+        m_controller.nextPicture();
+    }
+    catch (...) {
+        ui->nextButton->setEnabled(false);
+    }
+
+    ui->pictureName->setText(Model::instanse().picture().name().c_str());
+    ui->prevButton->setEnabled(true);
 }

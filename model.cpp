@@ -13,9 +13,19 @@ Model& Model::instanse()
     return *m_instanse;
 }
 
-const Picture& Model::picture() const
+Picture& Model::picture()
 {
     return m_picture;
+}
+
+void Model::setPicture(const Picture& picture)
+{
+    m_picture = picture;
+}
+
+Dataset& Model::dataset()
+{
+    return m_dataset;
 }
 
 void Model::addRect(std::shared_ptr<Rectangle> rect)
@@ -38,6 +48,11 @@ void Model::setCurrentSettings(const RectangleGraphicSettings &settings)
 RectangleGraphicSettings Model::currentSettings() const
 {
     return m_currentSettings;
+}
+
+void Model::loadDataset(const std::string& path)
+{
+    m_dataset = Dataset(path);
 }
 
 Model::Model(QObject* parent)

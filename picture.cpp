@@ -8,7 +8,7 @@ Picture::Picture()
     : QGraphicsPixmapItem() {}
 
 Picture::Picture(const std::string& path, const std::string& labelName, QSize size)
-    : QGraphicsPixmapItem()
+    : QGraphicsPixmapItem(), m_path{ path }, m_name{ labelName }, m_size{ size }
 {
     QImage image(path.c_str());
     auto imageScaled = image.scaled(size, Qt::KeepAspectRatio);
@@ -17,27 +17,36 @@ Picture::Picture(const std::string& path, const std::string& labelName, QSize si
     loadLabels(labelName);
 }
 
-Picture::Picture(const Picture& image)
-{
-    // TODO: add code
-}
+Picture::Picture(const Picture& picture)
+    : Picture{ picture.m_path, picture.m_name, picture.m_size }
+{}
 
-Picture::Picture(Picture&& image)
-{
-    // TODO: add code
-}
+Picture::Picture(Picture&& picture)
+    : Picture{ std::move(picture.m_path), std::move(picture.m_name), picture.m_size }
+{}
 
-Picture& Picture::operator=(const Picture& image) {
-    // TODO: add code
-    return *this;
-}
+// TODO: think about refactor
+Picture& Picture::operator=(Picture picture) {
+    std::swap(m_path, picture.m_path);
+    std::swap(m_name, picture.m_name);
+    std::swap(m_size, picture.m_size);
+    std::swap(m_rects, picture.m_rects);
 
-Picture& Picture::operator=(Picture&& image) {
-    // TODO: add code
+    QImage image(m_path.c_str());
+    auto imageScaled = image.scaled(m_size, Qt::KeepAspectRatio);
+    setPixmap(QPixmap::fromImage(imageScaled));
+
+    loadLabels(m_name);
+
     return *this;
 }
 
 Picture::~Picture() {}
+
+const std::string& Picture::name() const
+{
+    return m_name;
+}
 
 const std::vector<std::shared_ptr<Rectangle>>& Picture::rects() const
 {

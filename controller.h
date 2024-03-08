@@ -15,13 +15,15 @@ public:
     Controller& operator=(Controller&&) = delete;
     ~Controller();
 
-    void setDefaultColor(QColor color);
+    void loadDataset(const std::string& path);
 
-    // TODO: add setting picture
+    void setDefaultColor(QColor color);
 
     void addRect(std::shared_ptr<Rectangle> rect);
 
-    // TODO: add removing rects
+    void nextPicture();
+
+    void previousPicture();
 
     void changeCurrentDepthColor(int currentDepthColor);
 };
