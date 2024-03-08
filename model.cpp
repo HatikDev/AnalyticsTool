@@ -13,16 +13,21 @@ Model& Model::instanse()
     return *m_instanse;
 }
 
-const std::vector<std::shared_ptr<Rectangle>>& Model::rects() const
+const Picture& Model::picture() const
 {
-    return m_rects;
+    return m_picture;
 }
 
 void Model::addRect(std::shared_ptr<Rectangle> rect)
 {
-    m_rects.push_back(rect);
+    m_picture.addRect(rect);
 
     //    emit figureAdded(figure);
+}
+
+void Model::removeRect(std::shared_ptr<Rectangle> rect)
+{
+    // TODO: add remove objects
 }
 
 void Model::setCurrentSettings(const RectangleGraphicSettings &settings)
@@ -35,18 +40,9 @@ RectangleGraphicSettings Model::currentSettings() const
     return m_currentSettings;
 }
 
-std::shared_ptr<Rectangle> Model::rectByName(const std::string &name) const
-{
-    for (auto& obj : m_rects)
-        if (name == obj->name())
-            return obj;
-
-    throw std::logic_error("456"); // TODO: change error type
-}
-
 Model::Model(QObject* parent)
     : QObject(parent)
-    , m_rects{}
+    , m_picture{}
     , m_currentSettings{Qt::black, 5}
 {
     m_instanse = this;

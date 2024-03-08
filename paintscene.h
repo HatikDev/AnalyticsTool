@@ -1,10 +1,12 @@
 #ifndef PAINTSCENE_H
 #define PAINTSCENE_H
 
+#include "picture.h"
+#include "rectangle.h"
+
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <memory>
-#include "rectangle.h"
 
 class PaintScene : public QGraphicsScene
 {
@@ -23,9 +25,13 @@ private:
 
     static size_t counter;
 
+    Picture m_picture;
+
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+
+    void loadImage(const std::string& path, const std::string labelName);
 
 private slots:
     void rectSelectionChanged();

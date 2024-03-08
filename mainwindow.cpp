@@ -46,11 +46,11 @@ void MainWindow::on_rectsListWidget_itemClicked(QListWidgetItem *item)
     auto elementName = item->text();
 
     try {
-        auto& rects = Model::instanse().rects();
+        auto& rects = Model::instanse().picture().rects();
         for (auto& obj : rects)
             obj->deselect();
 
-        auto rect = Model::instanse().rectByName(elementName.toStdString());
+        auto rect = Model::instanse().picture().rectByName(elementName.toStdString());
         rect->select();
 
         ui->mainGraphicsView->update();
@@ -84,7 +84,7 @@ void MainWindow::on_updateButton_clicked()
     // TODO: clear data
     ui->rectsListWidget->clear();
 
-    auto& list = Model::instanse().rects();
+    auto& list = Model::instanse().picture().rects();
     for (auto& obj : list)
     {
         QPixmap pixmap(10, 10);

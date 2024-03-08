@@ -17,12 +17,13 @@ public:
 
     void setDefaultColor(QColor color);
 
+    // TODO: add setting picture
+
     void addRect(std::shared_ptr<Rectangle> rect);
 
+    // TODO: add removing rects
+
     void changeCurrentDepthColor(int currentDepthColor);
-
-private:
-
 };
 
 #endif // CONTROLLER_H

@@ -28,6 +28,8 @@ set(PROJECT_SOURCES
     controller.cpp
     controller.h
     constants.h
+    picture.h
+    picture.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

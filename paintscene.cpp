@@ -1,14 +1,26 @@
 #include "paintscene.h"
 #include "model.h"
 
+#include "picture.h"
+
 #include <stdexcept>
+
+#include <QPixmap>
 
 size_t PaintScene::counter = 0;
 
 PaintScene::PaintScene(QObject* parent)
-    : QGraphicsScene{ parent }
+    : QGraphicsScene{ parent }, m_current{ nullptr },
+      m_picture{"C:/Users/Sergey/Documents/cpp/AnalyticsTool/build/Debug/data/images/{0cd9a857-ad75-4771-ad9b-1a927a9bf856}_2.jpg", "",
+              { 480, 360 } } // TODO: change size
 {
     setSceneRect(0, 0, 480, 360); // TODO: think about size
+
+    loadImage("", "");
+
+    m_picture.setPos(0, 0);
+
+    addItem(&m_picture);
 }
 
 PaintScene::~PaintScene()
@@ -47,6 +59,12 @@ void PaintScene::mouseReleaseEvent(QGraphicsSceneMouseEvent*)
     m_current.reset();
 
     update();
+}
+
+void PaintScene::loadImage(const std::string& path, const std::string labelName)
+{
+    m_picture = {"C:/Users/Sergey/Documents/cpp/AnalyticsTool/build/Debug/data/images/{0cd9a857-ad75-4771-ad9b-1a927a9bf856}_2.jpg",
+                "", { 640, 640}/*sceneRect().size().toSize()*/};
 }
 
 void PaintScene::rectSelectionChanged()
