@@ -14,8 +14,6 @@ QT_END_NAMESPACE
 
 #include "controller.h"
 
-//class ListObjectsView;
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT

@@ -1,7 +1,7 @@
+#include "analyticsexception.h"
 #include "dataset.h"
 
 #include <filesystem>
-#include <stdexcept>
 
 namespace fs = std::filesystem;
 
@@ -53,7 +53,7 @@ std::string Dataset::currentName() const
 Picture Dataset::next()
 {
     if (m_currentIndex + 1 >= m_files.size())
-        throw std::logic_error("Too big index"); // TODO: change exception type
+        throw AnalyticsException("Too big index");
 
     ++m_currentIndex;
 
@@ -63,7 +63,7 @@ Picture Dataset::next()
 Picture Dataset::previous()
 {
     if (m_currentIndex == 0)
-        throw std::logic_error("Too small index"); // TODO: change exception type
+        throw AnalyticsException("Too small index");
 
     --m_currentIndex;
 

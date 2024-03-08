@@ -1,3 +1,4 @@
+#include "analyticsexception.h"
 #include "picture.h"
 
 #include <fstream>
@@ -64,7 +65,7 @@ std::shared_ptr<Rectangle> Picture::rectByName(const std::string& name) const
         if (name == obj->name())
             return obj;
 
-    throw std::logic_error("456"); // TODO: change error type
+    throw AnalyticsException("Failed to find rectangle by name");
 }
 
 void Picture::loadLabels(const std::string& labelName)

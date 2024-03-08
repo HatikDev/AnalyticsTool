@@ -1,6 +1,6 @@
+#include "analyticsexception.h"
 #include "paintscene.h"
 #include "model.h"
-
 #include "picture.h"
 
 #include <stdexcept>
@@ -46,7 +46,7 @@ void PaintScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 void PaintScene::mouseReleaseEvent(QGraphicsSceneMouseEvent*)
 {
     if (!m_current)
-        throw std::logic_error("123"); // TODO: change exception type
+        throw AnalyticsException("Current rectangle is not created");
 
     connect(m_current.get(), &Rectangle::rectSelected, this, &PaintScene::rectSelectionChanged);
     connect(m_current.get(), &Rectangle::rectDeselected, this, &PaintScene::rectSelectionChanged);
@@ -61,4 +61,3 @@ void PaintScene::rectSelectionChanged()
 {
     update();
 }
-

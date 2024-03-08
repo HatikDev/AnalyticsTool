@@ -32,6 +32,7 @@ set(PROJECT_SOURCES
     picture.cpp
     dataset.h
     dataset.cpp
+    analyticsexception.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
