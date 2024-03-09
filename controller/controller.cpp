@@ -30,16 +30,12 @@ void Controller::addRect(std::shared_ptr<Rectangle> rect)
 void Controller::nextPicture()
 {
     auto picture = Model::instanse().dataset().next();
-
-    // we have to update current picture
     Model::instanse().setPicture(picture);
 }
 
 void Controller::previousPicture()
 {
     auto picture = Model::instanse().dataset().previous();
-
-    // we have to update current picture
     Model::instanse().setPicture(picture);
 }
 

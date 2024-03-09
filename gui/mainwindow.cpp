@@ -6,11 +6,6 @@
 #include <QPushButton>
 #include <QColorDialog>
 #include <QMessageBox>
-#include <QDebug>
-
-#include <QtSql/QSqlDatabase>
-#include <QtSql/QSqlQuery>
-#include <QtSql/QSqlTableModel>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -30,9 +25,6 @@ MainWindow::MainWindow(QWidget* parent)
     connect(&Model::instanse().picture(), &Picture::rectAdded, this, &MainWindow::on_rectAdded);
 
     loadDataset("C:/Users/Sergey/Documents/cpp/AnalyticsTool/build/Debug/data");
-
-    // TODO: remove this
-    ui->pictureName->setText(Model::instanse().dataset().currentName().c_str());
 }
 
 MainWindow::~MainWindow()
@@ -44,14 +36,16 @@ void MainWindow::loadDataset(const std::string& path)
 {
     m_controller.loadDataset(path);
 
-    updateCounterLabel();
+    updateLabels();
 }
 
-void MainWindow::updateCounterLabel()
+void MainWindow::updateLabels()
 {
     size_t currentIndex = Model::instanse().dataset().currentIndex();
     size_t objectsCount = Model::instanse().dataset().count();
     ui->counterLabel->setText(QString("%1/%2").arg(currentIndex + 1).arg(objectsCount));
+
+    ui->pictureName->setText(Model::instanse().dataset().currentName().c_str());
 }
 
 void MainWindow::on_selectColorButton_clicked()
@@ -85,7 +79,7 @@ void MainWindow::on_rectsListWidget_itemClicked(QListWidgetItem* item)
 
 void MainWindow::on_rectsListWidget_itemDoubleClicked(QListWidgetItem* item)
 {
-
+    // TODO: add editing
 }
 
 void MainWindow::on_rectAdded(std::shared_ptr<Rectangle> rect)
@@ -151,10 +145,9 @@ void MainWindow::on_prevButton_clicked()
         ui->prevButton->setEnabled(false);
     }
 
-    ui->pictureName->setText(Model::instanse().picture().name().c_str());
     ui->nextButton->setEnabled(true);
 
-    updateCounterLabel();
+    updateLabels();
 }
 
 void MainWindow::on_nextButton_clicked()
@@ -168,8 +161,7 @@ void MainWindow::on_nextButton_clicked()
         ui->nextButton->setEnabled(false);
     }
 
-    ui->pictureName->setText(Model::instanse().picture().name().c_str());
     ui->prevButton->setEnabled(true);
 
-    updateCounterLabel();
+    updateLabels();
 }

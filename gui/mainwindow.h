@@ -31,7 +31,7 @@ private:
 
     PaintScene* m_paintScene;
 
-    void updateCounterLabel();
+    void updateLabels();
 
 private slots:
     void on_selectColorButton_clicked();

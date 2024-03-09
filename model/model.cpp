@@ -31,8 +31,6 @@ Dataset& Model::dataset()
 void Model::addRect(std::shared_ptr<Rectangle> rect)
 {
     m_picture.addRect(rect);
-
-    //    emit figureAdded(figure);
 }
 
 void Model::removeRect(std::shared_ptr<Rectangle> rect)

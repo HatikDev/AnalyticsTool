@@ -64,7 +64,7 @@ public:
     void deselect();
 
 public slots:
-    void updateRomb();     // Слот обновления области, в которой содержится фигура
+    void updateRomb();
 
 signals:
     void pointChanged();
@@ -80,7 +80,7 @@ protected:
 
     bool m_isSelected;
 
-    QRectF boundingRect() const;    // Область, в которой содержится фигура
+    QRectF boundingRect() const;
 
 private:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
