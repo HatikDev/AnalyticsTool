@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget* parent)
         this, &MainWindow::provideContextMenu);
 
     connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
+    connect(&Model::instanse().picture(), &Picture::rectAdded, this, &MainWindow::on_rectAdded);
 
     loadDataset("C:/Users/Sergey/Documents/cpp/AnalyticsTool/build/Debug/data");
 
@@ -42,6 +43,15 @@ MainWindow::~MainWindow()
 void MainWindow::loadDataset(const std::string& path)
 {
     m_controller.loadDataset(path);
+
+    updateCounterLabel();
+}
+
+void MainWindow::updateCounterLabel()
+{
+    size_t currentIndex = Model::instanse().dataset().currentIndex();
+    size_t objectsCount = Model::instanse().dataset().count();
+    ui->counterLabel->setText(QString("%1/%2").arg(currentIndex + 1).arg(objectsCount));
 }
 
 void MainWindow::on_selectColorButton_clicked()
@@ -101,6 +111,7 @@ void MainWindow::on_updateButton_clicked()
         QPixmap pixmap(10, 10);
         pixmap.fill(obj->graphicSettings().color());
 
+        // TODO: free resources
         QListWidgetItem* item = new QListWidgetItem(QIcon(pixmap), obj->name().c_str());
         ui->rectsListWidget->addItem(item);
     }
@@ -131,6 +142,8 @@ void MainWindow::provideContextMenu(const QPoint& pos)
 
 void MainWindow::on_prevButton_clicked()
 {
+    ui->rectsListWidget->clear();
+
     try {
         m_controller.previousPicture();
     }
@@ -140,10 +153,14 @@ void MainWindow::on_prevButton_clicked()
 
     ui->pictureName->setText(Model::instanse().picture().name().c_str());
     ui->nextButton->setEnabled(true);
+
+    updateCounterLabel();
 }
 
 void MainWindow::on_nextButton_clicked()
 {
+    ui->rectsListWidget->clear();
+
     try {
         m_controller.nextPicture();
     }
@@ -153,4 +170,6 @@ void MainWindow::on_nextButton_clicked()
 
     ui->pictureName->setText(Model::instanse().picture().name().c_str());
     ui->prevButton->setEnabled(true);
+
+    updateCounterLabel();
 }

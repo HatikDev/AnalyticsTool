@@ -31,6 +31,9 @@ public:
 
     std::shared_ptr<Rectangle> rectByName(const std::string& name) const;
 
+signals:
+    void rectAdded(std::shared_ptr<Rectangle> rect);
+
 private:
     std::string m_path;
 

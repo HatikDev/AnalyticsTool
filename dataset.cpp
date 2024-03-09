@@ -40,7 +40,7 @@ std::string Dataset::path() const
 Picture Dataset::current() const
 {
     std::string imagePath = m_path + "/images/" + m_files[m_currentIndex];
-    std::string labelsPath = m_path + "/images_labels/" + m_files[m_currentIndex];
+    std::string labelsPath = m_path + "/images_labels/" + m_files[m_currentIndex] + ".txt"; // TODO: think about file names
 
     return Picture(imagePath, labelsPath, QSize(360, 360)); // TODO: change size
 }

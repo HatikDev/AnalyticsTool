@@ -33,6 +33,19 @@
       <item>
        <layout class="QVBoxLayout" name="controlLayout">
         <item>
+         <widget class="QLabel" name="counterLabel">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>0/0</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QLineEdit" name="pictureName">
           <property name="enabled">
            <bool>false</bool>

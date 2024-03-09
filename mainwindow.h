@@ -31,6 +31,8 @@ private:
 
     PaintScene* m_paintScene;
 
+    void updateCounterLabel();
+
 private slots:
     void on_selectColorButton_clicked();
     void on_rectsListWidget_itemClicked(QListWidgetItem *item);

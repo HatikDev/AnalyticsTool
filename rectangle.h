@@ -44,6 +44,7 @@ public:
     ~Rectangle();
 
     std::string name() const;
+
     void setName(const std::string& name);
 
     QPointF startPoint() const;

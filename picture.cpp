@@ -1,7 +1,9 @@
 #include "analyticsexception.h"
 #include "picture.h"
+#include "model.h"
 
 #include <fstream>
+#include <sstream>
 
 #include <QString>
 
@@ -70,9 +72,37 @@ std::shared_ptr<Rectangle> Picture::rectByName(const std::string& name) const
 
 void Picture::loadLabels(const std::string& labelName)
 {
+    // TODO: method calls several times for loading 1 image. Fix it in future, plz
     std::ifstream file(labelName);
+    if (!file.is_open())
+        throw AnalyticsException(std::string("Failed to open file" + labelName).c_str());
+
+    m_rects.clear();
+
     std::string line;
+    size_t type;
+    QPoint startPoint;
+    QPoint endPoint;
+    double x0, y0;
+    double x1, y1;
+
     while (getline(file, line)) {
-        
+        std::stringstream ss;
+        ss << line;
+        ss >> type >> x0 >> y0 >> x1 >> y1;
+
+        // TODO: we need to multiply coordinates on image size
+        x0 *= 360;
+        y0 *= 360;
+        x1 *= 360;
+        y1 *= 360;
+
+        m_rects.push_back(std::make_shared<Rectangle>(labelName, QPointF(x0, y0), Model::instanse().currentSettings()));
+        m_rects.back()->setEndPoint(QPointF(x1, y1));
+
+        //connect(m_rects.get(), &Rectangle::rectSelected, this, &PaintScene::rectSelectionChanged);
+        //connect(m_rects.get(), &Rectangle::rectDeselected, this, &PaintScene::rectSelectionChanged);
+        // TODO: add disconnection
+        emit rectAdded(m_rects.back());
     }
 }
