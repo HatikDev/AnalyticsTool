@@ -34,7 +34,7 @@ private:
 
     size_t m_currentIndex = 0;
 
-    std::vector<std::string> m_files;
+    std::vector<std::string> m_names;
 
     void swap(Dataset& dataset);
 

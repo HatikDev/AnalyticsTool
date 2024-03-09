@@ -43,7 +43,7 @@ private:
 
     std::vector<std::shared_ptr<Rectangle>> m_rects;
 
-    void loadLabels(const std::string& labelPaths);
+    void loadLabels(const std::string& path, const std::string& labelPaths);
 };
 
 #endif // IMAGE_H

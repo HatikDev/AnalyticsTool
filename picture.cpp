@@ -13,11 +13,12 @@ Picture::Picture()
 Picture::Picture(const std::string& path, const std::string& labelName, QSize size)
     : QGraphicsPixmapItem(), m_path{ path }, m_name{ labelName }, m_size{ size }
 {
-    QImage image(path.c_str());
+    std::string imagePath = path + "/images/" + labelName + ".jpg";
+    QImage image(imagePath.c_str());
     auto imageScaled = image.scaled(size, Qt::KeepAspectRatio);
     setPixmap(QPixmap::fromImage(imageScaled));
 
-    loadLabels(labelName);
+    loadLabels(path, labelName);
 }
 
 Picture::Picture(const Picture& picture)
@@ -35,11 +36,12 @@ Picture& Picture::operator=(Picture picture) {
     std::swap(m_size, picture.m_size);
     std::swap(m_rects, picture.m_rects);
 
-    QImage image(m_path.c_str());
+    std::string imagePath = m_path + "/images/" + m_name + ".jpg";
+    QImage image(imagePath.c_str());
     auto imageScaled = image.scaled(m_size, Qt::KeepAspectRatio);
     setPixmap(QPixmap::fromImage(imageScaled));
 
-    loadLabels(m_name);
+    loadLabels(m_path, m_name);
 
     return *this;
 }
@@ -70,10 +72,10 @@ std::shared_ptr<Rectangle> Picture::rectByName(const std::string& name) const
     throw AnalyticsException("Failed to find rectangle by name");
 }
 
-void Picture::loadLabels(const std::string& labelName)
+void Picture::loadLabels(const std::string& path, const std::string& labelName)
 {
     // TODO: method calls several times for loading 1 image. Fix it in future, plz
-    std::ifstream file(labelName);
+    std::ifstream file(path + "/images_labels/" + labelName + ".txt");
     if (!file.is_open())
         throw AnalyticsException(std::string("Failed to open file" + labelName).c_str());
 
