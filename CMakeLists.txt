@@ -14,25 +14,31 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql)
 
+include_directories(${PROJECT_SOURCE_DIR}/include)
+
 set(PROJECT_SOURCES
-    rectangle.cpp
-    rectangle.h
+    gui/rectangle.cpp
+    gui/rectangle.h
+    gui/mainwindow.cpp
+    gui/mainwindow.h
+    gui/mainwindow.ui
+    gui/paintscene.h
+    gui/paintscene.cpp
+
+    controller/controller.h
+    controller/controller.cpp
+
+    model/model.cpp
+    model/model.h
+    model/picture.h
+    model/picture.cpp
+    model/dataset.h
+    model/dataset.cpp
+
+    include/constants.h
+    include/analyticsexception.h
+
     main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
-    paintscene.h
-    paintscene.cpp
-    model.cpp
-    model.h
-    controller.cpp
-    controller.h
-    constants.h
-    picture.h
-    picture.cpp
-    dataset.h
-    dataset.cpp
-    analyticsexception.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

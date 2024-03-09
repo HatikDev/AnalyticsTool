@@ -1,8 +1,8 @@
 #ifndef PAINTSCENE_H
 #define PAINTSCENE_H
 
-#include "picture.h"
-#include "rectangle.h"
+#include "model/picture.h"
+#include "gui/rectangle.h"
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>

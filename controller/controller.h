@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include "rectangle.h"
+#include "gui/rectangle.h"
 
 #include <memory>
 

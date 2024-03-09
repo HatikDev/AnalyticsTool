@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "model.h"
+#include "model/model.h"
 #include "./ui_mainwindow.h"
 #include "paintscene.h"
 

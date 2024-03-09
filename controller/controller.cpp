@@ -1,5 +1,5 @@
-#include "controller.h"
-#include "model.h"
+#include "controller/controller.h"
+#include "model/model.h"
 
 Controller::Controller()
 {}

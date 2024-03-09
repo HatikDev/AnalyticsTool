@@ -1,7 +1,7 @@
 #include "analyticsexception.h"
 #include "paintscene.h"
-#include "model.h"
-#include "picture.h"
+#include "model/model.h"
+#include "model/picture.h"
 
 #include <stdexcept>
 

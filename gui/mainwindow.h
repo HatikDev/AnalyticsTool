@@ -12,7 +12,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-#include "controller.h"
+#include "controller/controller.h"
 
 class MainWindow : public QMainWindow
 {

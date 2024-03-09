@@ -2,7 +2,7 @@
 
 #include "dataset.h"
 #include "picture.h"
-#include "rectangle.h"
+#include "gui/rectangle.h"
 
 #include <memory>
 #include <vector>
