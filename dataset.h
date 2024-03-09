@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 class Dataset {
 public:
@@ -21,6 +22,8 @@ public:
 
     std::string currentName() const;
 
+    const std::unordered_map<size_t, std::string>& classes() const;
+
     Picture next();
 
     Picture previous();
@@ -35,6 +38,8 @@ private:
     size_t m_currentIndex = 0;
 
     std::vector<std::string> m_names;
+
+    std::unordered_map<size_t, std::string> m_classes;
 
     void swap(Dataset& dataset);
 

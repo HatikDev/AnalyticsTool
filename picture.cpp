@@ -99,7 +99,8 @@ void Picture::loadLabels(const std::string& path, const std::string& labelName)
         x1 *= 360;
         y1 *= 360;
 
-        m_rects.push_back(std::make_shared<Rectangle>(labelName, QPointF(x0, y0), Model::instanse().currentSettings()));
+        // TODO: change type by predefined class
+        m_rects.push_back(std::make_shared<Rectangle>(std::to_string(type), QPointF(x0, y0), Model::instanse().currentSettings()));
         m_rects.back()->setEndPoint(QPointF(x1, y1));
 
         //connect(m_rects.get(), &Rectangle::rectSelected, this, &PaintScene::rectSelectionChanged);
