@@ -11,8 +11,7 @@ void Controller::loadDataset(const std::string& path)
 {
     Model::instanse().loadDataset(path);
 
-    auto picture = Model::instanse().dataset().current();
-    Model::instanse().setPicture(picture);
+    Model::instanse().setPicture(Model::instanse().dataset().current());
 }
 
 void Controller::setDefaultColor(QColor color)
@@ -30,13 +29,13 @@ void Controller::addRect(std::shared_ptr<Rectangle> rect)
 void Controller::nextPicture()
 {
     auto picture = Model::instanse().dataset().next();
-    Model::instanse().setPicture(picture);
+    Model::instanse().setPicture(std::move(picture));
 }
 
 void Controller::previousPicture()
 {
     auto picture = Model::instanse().dataset().previous();
-    Model::instanse().setPicture(picture);
+    Model::instanse().setPicture(std::move(picture));
 }
 
 void Controller::changeCurrentDepthColor(int currentDepthColor)

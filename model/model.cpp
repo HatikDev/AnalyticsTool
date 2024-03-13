@@ -18,9 +18,9 @@ Picture& Model::picture()
     return m_picture;
 }
 
-void Model::setPicture(const Picture& picture)
+void Model::setPicture(Picture&& picture)
 {
-    m_picture = picture;
+    m_picture = std::move(picture);
 }
 
 Dataset& Model::dataset()

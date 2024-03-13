@@ -21,7 +21,7 @@ public:
 
     Picture& picture();
 
-    void setPicture(const Picture& picture);
+    void setPicture(Picture&& picture);
 
     Dataset& dataset();
 

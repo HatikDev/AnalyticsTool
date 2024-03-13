@@ -21,8 +21,12 @@ MainWindow::MainWindow(QWidget* parent)
     connect(ui->rectsListWidget, &QListWidget::customContextMenuRequested,
         this, &MainWindow::provideContextMenu);
 
-    connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
+    // connect for rects loading from dataset
+    connect(&Model::instanse().picture(), &Picture::rectAdded, m_paintScene, &PaintScene::on_rectAdded);
     connect(&Model::instanse().picture(), &Picture::rectAdded, this, &MainWindow::on_rectAdded);
+
+    // connects for rects drawn by mouse
+    connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
 
     loadDataset("C:/Users/Sergey/Documents/cpp/AnalyticsTool/build/Debug/data");
 }

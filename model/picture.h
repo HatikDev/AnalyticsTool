@@ -16,9 +16,10 @@ class Picture : public QObject, public QGraphicsPixmapItem
 public:
     Picture();
     Picture(const std::string& path, const std::string& labelPath, QSize size);
-    Picture(const Picture& image);
-    Picture(Picture&& image);
-    Picture& operator=(Picture image);
+    Picture(const Picture& picture) = delete;
+    Picture(Picture&& picture);
+    Picture& operator=(const Picture& picture) = delete;
+    Picture& operator=(Picture&& picture);
     ~Picture();
 
     const std::string& name() const;
@@ -42,6 +43,8 @@ private:
     QSize m_size;
 
     std::vector<std::shared_ptr<Rectangle>> m_rects;
+
+    void loadImage();
 
     void loadLabels(const std::string& path, const std::string& labelPaths);
 };

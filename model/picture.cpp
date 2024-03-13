@@ -13,36 +13,29 @@ Picture::Picture()
 Picture::Picture(const std::string& path, const std::string& labelName, QSize size)
     : QGraphicsPixmapItem(), m_path{ path }, m_name{ labelName }, m_size{ size }
 {
-    std::string imagePath = path + "/images/" + labelName + ".jpg";
-    QImage image(imagePath.c_str());
-    auto imageScaled = image.scaled(size, Qt::KeepAspectRatio);
-    setPixmap(QPixmap::fromImage(imageScaled));
-
-    loadLabels(path, labelName);
+    loadImage();
 }
 
-Picture::Picture(const Picture& picture)
-    : Picture{ picture.m_path, picture.m_name, picture.m_size }
-{}
-
 Picture::Picture(Picture&& picture)
-    : Picture{ std::move(picture.m_path), std::move(picture.m_name), picture.m_size }
-{}
+    : QGraphicsPixmapItem(), m_path{ std::move(picture.m_path) }
+    , m_name{ std::move(picture.m_name) }, m_size{ picture.m_size }
+    , m_rects{ std::move(picture.m_rects) }
+{
+    loadImage();
+}
 
-// TODO: think about refactor
-Picture& Picture::operator=(Picture picture) {
-    std::swap(m_path, picture.m_path);
-    std::swap(m_name, picture.m_name);
-    std::swap(m_size, picture.m_size);
-    std::swap(m_rects, picture.m_rects);
+Picture& Picture::operator=(Picture&& picture)
+{
+    m_path = std::move(picture.m_path);
+    m_name = std::move(picture.m_name);
+    m_size = std::move(picture.m_size);
+    m_rects = std::move(picture.m_rects);
 
-    std::string imagePath = m_path + "/images/" + m_name + ".jpg";
-    QImage image(imagePath.c_str());
-    auto imageScaled = image.scaled(m_size, Qt::KeepAspectRatio);
-    setPixmap(QPixmap::fromImage(imageScaled));
+    loadImage();
 
+    // TODO: think about copy construct of this class.
+    // We must load labels only one time
     loadLabels(m_path, m_name);
-
     return *this;
 }
 
@@ -72,9 +65,16 @@ std::shared_ptr<Rectangle> Picture::rectByName(const std::string& name) const
     throw AnalyticsException("Failed to find rectangle by name");
 }
 
+void Picture::loadImage()
+{
+    std::string imagePath = m_path + "/images/" + m_name + ".jpg";
+    QImage image(imagePath.c_str());
+    auto imageScaled = image.scaled(m_size, Qt::KeepAspectRatio);
+    setPixmap(QPixmap::fromImage(imageScaled));
+}
+
 void Picture::loadLabels(const std::string& path, const std::string& labelName)
 {
-    // TODO: method calls several times for loading 1 image. Fix it in future, plz
     std::ifstream file(path + "/images_labels/" + labelName + ".txt");
     if (!file.is_open())
         throw AnalyticsException(std::string("Failed to open file" + labelName).c_str());

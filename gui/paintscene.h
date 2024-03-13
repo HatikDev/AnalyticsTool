@@ -29,6 +29,11 @@ private:
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
 
+public slots:
+    // Calls when rect was added not from PaintScene.
+    // For instance, loaded from dataset
+    void on_rectAdded(std::shared_ptr<Rectangle> rect);
+
 private slots:
     void rectSelectionChanged();
 };

@@ -26,9 +26,7 @@ void PaintScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     QGraphicsScene::mousePressEvent(event);
 
-    std::string name;
-
-    name = "New rect " + std::to_string(counter++);
+    std::string name = "New rect " + std::to_string(counter++);
     m_current = std::make_shared<Rectangle>(name, event->scenePos(), Model::instanse().currentSettings());
 
     addItem(m_current.get());
@@ -53,6 +51,13 @@ void PaintScene::mouseReleaseEvent(QGraphicsSceneMouseEvent*)
     // TODO: add disconnection
     emit rectAdded(m_current);
     m_current.reset();
+
+    update();
+}
+
+void PaintScene::on_rectAdded(std::shared_ptr<Rectangle> rect)
+{
+    addItem(rect.get());
 
     update();
 }
