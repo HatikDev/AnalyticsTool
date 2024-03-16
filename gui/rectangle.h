@@ -51,6 +51,10 @@ public:
 
     QPointF endPoint() const;
 
+    QPointF topLeft() const;
+
+    QPointF bottomRight() const;
+
     void setStartPoint(QPointF point);
 
     void setEndPoint(QPointF point);

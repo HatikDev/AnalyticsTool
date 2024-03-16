@@ -25,9 +25,15 @@ private:
 
     static size_t counter;
 
-    void mousePressEvent(QGraphicsSceneMouseEvent* event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+    void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
+
+    bool selectRect(const QGraphicsSceneMouseEvent& event) const;
+
+    void createLocalRect(const QGraphicsSceneMouseEvent& event);
 
 public slots:
     // Calls when rect was added not from PaintScene.

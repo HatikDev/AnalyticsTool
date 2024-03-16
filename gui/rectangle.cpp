@@ -46,6 +46,22 @@ QPointF Rectangle::endPoint() const
     return m_endPoint;
 }
 
+QPointF Rectangle::topLeft() const
+{
+    auto x = m_startPoint.x() > m_endPoint.x() ? m_endPoint.x() : m_startPoint.x();
+    auto y = m_startPoint.y() > m_endPoint.y() ? m_endPoint.y() : m_startPoint.y();
+
+    return { x, y };
+}
+
+QPointF Rectangle::bottomRight() const
+{
+    auto x = m_startPoint.x() > m_endPoint.x() ? m_startPoint.x() : m_endPoint.x();
+    auto y = m_startPoint.y() > m_endPoint.y() ? m_startPoint.y() : m_endPoint.y();
+
+    return { x, y };
+}
+
 void Rectangle::setStartPoint(QPointF point)
 {
     m_startPoint = mapFromScene(point);
