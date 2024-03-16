@@ -1,3 +1,4 @@
+#include "constants.h"
 #include "model.h"
 
 #include <stdexcept>
@@ -56,7 +57,7 @@ void Model::loadDataset(const std::string& path)
 Model::Model(QObject* parent)
     : QObject(parent)
     , m_picture{}
-    , m_currentSettings{Qt::black, 5}
+    , m_currentSettings{ Qt::black, kLineWidth }
 {
     m_instanse = this;
 }
