@@ -31,13 +31,6 @@ class Rectangle : public QObject, public QGraphicsItem
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
 
-    Q_PROPERTY(QPointF startPoint
-        READ startPoint WRITE setStartPoint
-        NOTIFY pointChanged)
-    Q_PROPERTY(QPointF endPoint
-        READ endPoint WRITE setEndPoint
-        NOTIFY pointChanged)
-
 public:
     explicit Rectangle(std::string name, QPointF point,
                     RectangleGraphicSettings graphicSettings, QObject* parent = 0);
@@ -47,11 +40,11 @@ public:
 
     void setName(const std::string& name);
 
-    QPointF startPoint() const;
-
-    QPointF endPoint() const;
-
     QPointF topLeft() const;
+
+    QPointF topRight() const;
+
+    QPointF bottomLeft() const;
 
     QPointF bottomRight() const;
 

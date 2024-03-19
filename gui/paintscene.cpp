@@ -1,7 +1,8 @@
 #include "analyticsexception.h"
-#include "paintscene.h"
+#include "constants.h"
 #include "model/model.h"
 #include "model/picture.h"
+#include "paintscene.h"
 
 #include <stdexcept>
 
@@ -16,12 +17,16 @@ bool isInside(QPointF point, const Rectangle& rect) {
     return point.x() >= startPoint.x() && point.x() <= endPoint.x()
            && point.y() >= startPoint.y() && point.y() <= endPoint.y();
 }
+
+size_t distance(QPointF p1, QPointF p2) {
+    return sqrt(pow(p1.x() - p2.x(), 2) + pow(p1.y() - p2.y(), 2));
+}
 }
 
 size_t PaintScene::counter = 0;
 
 PaintScene::PaintScene(QObject* parent)
-    : QGraphicsScene{ parent }, m_current{ nullptr }
+    : QGraphicsScene{ parent }
 {
     setSceneRect(0, 0, 480, 360); // TODO: think about size
 
@@ -37,20 +42,28 @@ void PaintScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     QGraphicsScene::mousePressEvent(event);
 
-    if (selectRect(*event))
+    if (tryEditRect(*event)) {
+        m_mouseState = MouseState::editing;
         return;
+    }
 
-    createLocalRect(*event);
+    if (trySelectRect(*event)) {
+        m_mouseState = MouseState::selecting;
+        return;
+    }
+
+    tryCreateLocalRect(*event);
+    m_mouseState = MouseState::creating;
 }
 
 void PaintScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     QGraphicsScene::mouseMoveEvent(event);
 
-    if (!m_current)
+    if (!m_currentRect)
         return;
 
-    m_current->setEndPoint(event->scenePos());
+    m_currentRect->setEndPoint(event->scenePos());
 
     update();
 }
@@ -59,19 +72,58 @@ void PaintScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     QGraphicsScene::mouseReleaseEvent(event);
 
-    if (!m_current)
+    if (!m_currentRect)
         return;
 
-    connect(m_current.get(), &Rectangle::rectSelected, this, &PaintScene::rectSelectionChanged);
-    connect(m_current.get(), &Rectangle::rectDeselected, this, &PaintScene::rectSelectionChanged);
-    // TODO: add disconnection
-    emit rectAdded(m_current);
-    m_current.reset();
+    if (m_mouseState == MouseState::creating) {
+        connect(m_currentRect.get(), &Rectangle::rectSelected, this, &PaintScene::rectSelectionChanged);
+        connect(m_currentRect.get(), &Rectangle::rectDeselected, this, &PaintScene::rectSelectionChanged);
+        // TODO: add disconnection
+        emit rectAdded(m_currentRect);
+        m_currentRect.reset();
+    }
+
+    m_mouseState = MouseState::released;
 
     update();
 }
 
-bool PaintScene::selectRect(const QGraphicsSceneMouseEvent& event) const
+bool PaintScene::tryEditRect(const QGraphicsSceneMouseEvent& event)
+{
+    for (auto& rect : Model::instanse().picture().rects()) {
+        if (distance(rect->topLeft(), event.scenePos()) <= kSelectionCircleRadius) {
+            m_currentRect = rect;
+            m_currentRect->setStartPoint(rect->bottomRight());
+            m_currentRect->setEndPoint(rect->topLeft());
+            return true;
+        }
+
+        if (distance(rect->topRight(), event.scenePos()) <= kSelectionCircleRadius) {
+            m_currentRect = rect;
+            m_currentRect->setStartPoint(rect->bottomLeft());
+            m_currentRect->setEndPoint(rect->topRight());
+            return true;
+        }
+
+        if (distance(rect->bottomLeft(), event.scenePos()) <= kSelectionCircleRadius) {
+            m_currentRect = rect;
+            m_currentRect->setStartPoint(rect->topRight());
+            m_currentRect->setEndPoint(rect->bottomLeft());
+            return true;
+        }
+
+        if (distance(rect->bottomRight(), event.scenePos()) <= kSelectionCircleRadius) {
+            m_currentRect = rect;
+            m_currentRect->setStartPoint(rect->topLeft());
+            m_currentRect->setEndPoint(rect->bottomRight());
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool PaintScene::trySelectRect(const QGraphicsSceneMouseEvent& event) const
 {
     bool isSelected = false;
     auto& rects = Model::instanse().picture().rects();
@@ -88,14 +140,18 @@ bool PaintScene::selectRect(const QGraphicsSceneMouseEvent& event) const
     return isSelected;
 }
 
-void PaintScene::createLocalRect(const QGraphicsSceneMouseEvent& event)
+bool PaintScene::tryCreateLocalRect(const QGraphicsSceneMouseEvent& event)
 {
     std::string name = "New rect " + std::to_string(counter++);
-    m_current = std::make_shared<Rectangle>(name, event.scenePos(), Model::instanse().currentSettings());
+    m_currentRect = std::make_shared<Rectangle>(name, event.scenePos(), Model::instanse().currentSettings());
 
-    addItem(m_current.get());
+    addItem(m_currentRect.get());
+
+    m_mouseState = MouseState::creating;
 
     update();
+
+    return true;
 }
 
 void PaintScene::on_rectAdded(std::shared_ptr<Rectangle> rect)

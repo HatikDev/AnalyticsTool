@@ -36,20 +36,26 @@ void Rectangle::setName(const std::string& name)
     m_name = name;
 }
 
-QPointF Rectangle::startPoint() const
-{
-    return m_startPoint;
-}
-
-QPointF Rectangle::endPoint() const
-{
-    return m_endPoint;
-}
-
 QPointF Rectangle::topLeft() const
 {
     auto x = m_startPoint.x() > m_endPoint.x() ? m_endPoint.x() : m_startPoint.x();
     auto y = m_startPoint.y() > m_endPoint.y() ? m_endPoint.y() : m_startPoint.y();
+
+    return { x, y };
+}
+
+QPointF Rectangle::topRight() const
+{
+    auto x = m_startPoint.x() > m_endPoint.x() ? m_startPoint.x() : m_endPoint.x();
+    auto y = m_startPoint.y() > m_endPoint.y() ? m_endPoint.y() : m_startPoint.y();
+
+    return { x, y };
+}
+
+QPointF Rectangle::bottomLeft() const
+{
+    auto x = m_startPoint.x() > m_endPoint.x() ? m_endPoint.x() : m_startPoint.x();
+    auto y = m_startPoint.y() > m_endPoint.y() ? m_startPoint.y() : m_endPoint.y();
 
     return { x, y };
 }
@@ -100,18 +106,18 @@ void Rectangle::deselect()
 
 void Rectangle::updateRomb()
 {
-    update((endPoint().x() > startPoint().x() ? startPoint().x() : endPoint().x()) - 5,
-        (endPoint().y() > startPoint().y() ? startPoint().y() : endPoint().y()) - 5,
-        qAbs(endPoint().x() - startPoint().x()) + 10,
-        qAbs(endPoint().y() - startPoint().y()) + 10);
+    update((m_endPoint.x() > m_startPoint.x() ? m_startPoint.x() : m_endPoint.x()) - 5,
+        (m_endPoint.y() > m_startPoint.y() ? m_startPoint.y() : m_endPoint.y()) - 5,
+        qAbs(m_endPoint.x() - m_startPoint.x()) + 10,
+        qAbs(m_endPoint.y() - m_startPoint.y()) + 10);
 }
 
 QRectF Rectangle::boundingRect() const
 {
-    return QRectF((endPoint().x() > startPoint().x() ? startPoint().x() : endPoint().x()) - 5,
-        (endPoint().y() > startPoint().y() ? startPoint().y() : endPoint().y()) - 5,
-        qAbs(endPoint().x() - startPoint().x()) + 10,
-        qAbs(endPoint().y() - startPoint().y()) + 10);
+    return QRectF((m_endPoint.x() > m_startPoint.x() ? m_startPoint.x() : m_endPoint.x()) - 5,
+        (m_endPoint.y() > m_startPoint.y() ? m_startPoint.y() : m_endPoint.y()) - 5,
+        qAbs(m_endPoint.x() - m_startPoint.x()) + 10,
+        qAbs(m_endPoint.y() - m_startPoint.y()) + 10);
 }
 
 void Rectangle::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)

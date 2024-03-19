@@ -6,7 +6,15 @@
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+
 #include <memory>
+
+enum class MouseState {
+    released = 0,
+    creating,
+    editing,
+    selecting,
+};
 
 class PaintScene : public QGraphicsScene
 {
@@ -21,9 +29,11 @@ signals:
     void rectAdded(std::shared_ptr<Rectangle> figure);
 
 private:
-    std::shared_ptr<Rectangle> m_current;
+    std::shared_ptr<Rectangle> m_currentRect = nullptr;
 
     static size_t counter;
+
+    MouseState m_mouseState = MouseState::released;
 
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
@@ -31,9 +41,11 @@ private:
 
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
-    bool selectRect(const QGraphicsSceneMouseEvent& event) const;
+    bool tryEditRect(const QGraphicsSceneMouseEvent& event);
 
-    void createLocalRect(const QGraphicsSceneMouseEvent& event);
+    bool trySelectRect(const QGraphicsSceneMouseEvent& event) const;
+
+    bool tryCreateLocalRect(const QGraphicsSceneMouseEvent& event);
 
 public slots:
     // Calls when rect was added not from PaintScene.
