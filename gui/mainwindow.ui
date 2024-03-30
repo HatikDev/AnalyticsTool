@@ -79,17 +79,7 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0">
-        <item>
-         <widget class="QSpinBox" name="spinBox">
-          <property name="maximum">
-           <number>20</number>
-          </property>
-          <property name="value">
-           <number>5</number>
-          </property>
-         </widget>
-        </item>
+       <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
         <item>
          <widget class="QPushButton" name="selectColorButton">
           <property name="text">
