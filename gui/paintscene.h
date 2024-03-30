@@ -25,8 +25,10 @@ public:
      ~PaintScene();
 
 signals:
-    void currentRectChanged(); // TODO: maybe it should be deleted
-    void rectAdded(std::shared_ptr<Rectangle> figure);
+    void rectAdded(std::shared_ptr<Rectangle> rect);
+    void rectSelected(std::shared_ptr<Rectangle> rect);
+    void rectDeselected(std::shared_ptr<Rectangle> rect);
+    void rectRemove(std::shared_ptr<Rectangle> rect); // TODO: add deleting rect
 
 private:
     std::shared_ptr<Rectangle> m_currentRect = nullptr;

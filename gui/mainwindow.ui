@@ -79,18 +79,11 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+       <layout class="QHBoxLayout" name="horizontalLayout" stretch="0">
         <item>
          <widget class="QPushButton" name="selectColorButton">
           <property name="text">
            <string>select color</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="updateButton">
-          <property name="text">
-           <string>update</string>
           </property>
          </widget>
         </item>

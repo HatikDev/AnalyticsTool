@@ -14,6 +14,9 @@ MainWindow::MainWindow(QWidget* parent)
 {
     ui->setupUi(this);
 
+    connect(m_paintScene, &PaintScene::rectSelected, this, &MainWindow::on_rectSelected);
+    connect(m_paintScene, &PaintScene::rectDeselected, this, &MainWindow::on_rectDeselected);
+
     ui->mainGraphicsView->setScene(m_paintScene);
     ui->mainGraphicsView->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
@@ -71,7 +74,8 @@ void MainWindow::on_rectsListWidget_itemClicked(QListWidgetItem* item)
         auto rect = Model::instanse().picture().rectByName(elementName.toStdString());
         rect->select();
 
-        ui->mainGraphicsView->update();
+        //ui->mainGraphicsView->update();
+        m_paintScene->update();
     }
     catch (...) {
         QMessageBox::critical(this, tr("Analytics tool v2"),
@@ -79,11 +83,6 @@ void MainWindow::on_rectsListWidget_itemClicked(QListWidgetItem* item)
             QMessageBox::Ok,
             QMessageBox::Ok);
     }
-}
-
-void MainWindow::on_rectsListWidget_itemDoubleClicked(QListWidgetItem* item)
-{
-    // TODO: add editing
 }
 
 void MainWindow::on_rectAdded(std::shared_ptr<Rectangle> rect)
@@ -98,27 +97,19 @@ void MainWindow::on_rectAdded(std::shared_ptr<Rectangle> rect)
     ui->rectsListWidget->addItem(item);
 }
 
-void MainWindow::on_updateButton_clicked()
+void MainWindow::on_rectSelected(std::shared_ptr<Rectangle> rect)
 {
-    // TODO: clear data
-    ui->rectsListWidget->clear();
-
-    auto& list = Model::instanse().picture().rects();
-    for (auto& obj : list)
-    {
-        QPixmap pixmap(10, 10);
-        pixmap.fill(obj->graphicSettings().color());
-
-        // TODO: free resources
-        QListWidgetItem* item = new QListWidgetItem(QIcon(pixmap), obj->name().c_str());
-        ui->rectsListWidget->addItem(item);
-    }
-    ui->mainGraphicsView->update();
+    // TODO: add handler
 }
 
-void MainWindow::on_spinBox_valueChanged(int value)
+void MainWindow::on_rectDeselected(std::shared_ptr<Rectangle> rect)
 {
-    m_controller.changeCurrentDepthColor(value);
+    // TODO: add handler
+}
+
+void MainWindow::on_rectRemoved(std::shared_ptr<Rectangle> rect)
+{
+    // TODO: add handles of removing rects
 }
 
 void MainWindow::provideContextMenu(const QPoint& pos)

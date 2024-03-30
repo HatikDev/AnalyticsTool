@@ -35,12 +35,13 @@ private:
 
 private slots:
     void on_selectColorButton_clicked();
+
     void on_rectsListWidget_itemClicked(QListWidgetItem *item);
-    void on_rectsListWidget_itemDoubleClicked(QListWidgetItem *item);
 
     void on_rectAdded(std::shared_ptr<Rectangle> rect);
-    void on_updateButton_clicked();
-    void on_spinBox_valueChanged(int value);
+    void on_rectSelected(std::shared_ptr<Rectangle> rect);
+    void on_rectDeselected(std::shared_ptr<Rectangle> rect);
+    void on_rectRemoved(std::shared_ptr<Rectangle> rect);
 
     void provideContextMenu(const QPoint& pos);
 

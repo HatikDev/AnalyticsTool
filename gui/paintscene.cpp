@@ -76,9 +76,6 @@ void PaintScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         return;
 
     if (m_mouseState == MouseState::creating) {
-        connect(m_currentRect.get(), &Rectangle::rectSelected, this, &PaintScene::rectSelectionChanged);
-        connect(m_currentRect.get(), &Rectangle::rectDeselected, this, &PaintScene::rectSelectionChanged);
-        // TODO: add disconnection
         emit rectAdded(m_currentRect);
         m_currentRect.reset();
     }
@@ -128,14 +125,15 @@ bool PaintScene::trySelectRect(const QGraphicsSceneMouseEvent& event)
     bool isSelected = false;
     auto& rects = Model::instanse().picture().rects();
     for (auto& rect : rects) {
-        if (isInside(event.scenePos(), *rect)) {
+        if (isSelected = isInside(event.scenePos(), *rect)) {
             rect->select();
-            isSelected = true;
 
             update();
+            emit rectSelected(rect);
         }
         else {
             rect->deselect();
+            emit rectDeselected(rect);
         }
     }
 

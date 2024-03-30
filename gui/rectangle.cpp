@@ -93,15 +93,11 @@ void Rectangle::setGraphicSettings(RectangleGraphicSettings settings)
 void Rectangle::select()
 {
     m_isSelected = true;
-
-    emit rectSelected();
 }
 
 void Rectangle::deselect()
 {
     m_isSelected = false;
-
-    emit rectDeselected();
 }
 
 void Rectangle::updateRomb()

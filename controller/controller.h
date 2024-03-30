@@ -24,8 +24,6 @@ public:
     void nextPicture();
 
     void previousPicture();
-
-    void changeCurrentDepthColor(int currentDepthColor);
 };
 
 #endif // CONTROLLER_H

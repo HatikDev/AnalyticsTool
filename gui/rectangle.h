@@ -65,8 +65,6 @@ public slots:
 
 signals:
     void pointChanged();
-    void rectSelected();
-    void rectDeselected();
 
 protected:
     std::string m_name;

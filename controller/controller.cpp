@@ -37,10 +37,3 @@ void Controller::previousPicture()
     auto picture = Model::instanse().dataset().previous();
     Model::instanse().setPicture(std::move(picture));
 }
-
-void Controller::changeCurrentDepthColor(int currentDepthColor)
-{
-    auto settings = Model::instanse().currentSettings();
-    settings.setDepthColor(currentDepthColor);
-    Model::instanse().setCurrentSettings(settings);
-}
