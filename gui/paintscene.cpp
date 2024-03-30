@@ -123,7 +123,7 @@ bool PaintScene::tryEditRect(const QGraphicsSceneMouseEvent& event)
     return false;
 }
 
-bool PaintScene::trySelectRect(const QGraphicsSceneMouseEvent& event) const
+bool PaintScene::trySelectRect(const QGraphicsSceneMouseEvent& event)
 {
     bool isSelected = false;
     auto& rects = Model::instanse().picture().rects();
@@ -131,6 +131,8 @@ bool PaintScene::trySelectRect(const QGraphicsSceneMouseEvent& event) const
         if (isInside(event.scenePos(), *rect)) {
             rect->select();
             isSelected = true;
+
+            update();
         }
         else {
             rect->deselect();

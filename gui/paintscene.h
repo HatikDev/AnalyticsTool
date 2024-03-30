@@ -43,7 +43,7 @@ private:
 
     bool tryEditRect(const QGraphicsSceneMouseEvent& event);
 
-    bool trySelectRect(const QGraphicsSceneMouseEvent& event) const;
+    bool trySelectRect(const QGraphicsSceneMouseEvent& event);
 
     bool tryCreateLocalRect(const QGraphicsSceneMouseEvent& event);
 
