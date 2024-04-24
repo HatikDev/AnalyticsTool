@@ -8,19 +8,19 @@
 
 #include <QPixmap>
 
-namespace 
+namespace
 {
-bool isInside(QPointF point, const Rectangle& rect) {
-    auto startPoint = rect.topLeft();
-    auto endPoint = rect.bottomRight();
+    bool isInside(QPointF point, const Rectangle& rect) {
+        auto startPoint = rect.topLeft();
+        auto endPoint = rect.bottomRight();
 
-    return point.x() >= startPoint.x() && point.x() <= endPoint.x()
-           && point.y() >= startPoint.y() && point.y() <= endPoint.y();
-}
+        return point.x() >= startPoint.x() && point.x() <= endPoint.x()
+            && point.y() >= startPoint.y() && point.y() <= endPoint.y();
+    }
 
-size_t distance(QPointF p1, QPointF p2) {
-    return sqrt(pow(p1.x() - p2.x(), 2) + pow(p1.y() - p2.y(), 2));
-}
+    size_t distance(QPointF p1, QPointF p2) {
+        return sqrt(pow(p1.x() - p2.x(), 2) + pow(p1.y() - p2.y(), 2));
+    }
 }
 
 size_t PaintScene::counter = 0;
@@ -126,14 +126,19 @@ bool PaintScene::trySelectRect(const QGraphicsSceneMouseEvent& event)
     auto& rects = Model::instanse().picture().rects();
     for (auto& rect : rects) {
         if (isSelected = isInside(event.scenePos(), *rect)) {
+            for (auto& otherRect : rects) {
+                if (otherRect == rect) continue;
+
+                otherRect->deselect();
+                emit rectDeselected(otherRect);
+            }
+
             rect->select();
 
             update();
             emit rectSelected(rect);
-        }
-        else {
-            rect->deselect();
-            emit rectDeselected(rect);
+
+            return true;
         }
     }
 

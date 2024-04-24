@@ -98,7 +98,7 @@ void MainWindow::on_rectAdded(std::shared_ptr<Rectangle> rect)
 
 void MainWindow::on_rectSelected(std::shared_ptr<Rectangle> rect)
 {
-    ui->rectsListWidget->items();
+    //ui->rectsListWidget->items();
     // TODO: add handler
 }
 
