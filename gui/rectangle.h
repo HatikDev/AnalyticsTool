@@ -32,8 +32,7 @@ class Rectangle : public QObject, public QGraphicsItem
     Q_INTERFACES(QGraphicsItem)
 
 public:
-    explicit Rectangle(std::string name, QPointF point,
-                    RectangleGraphicSettings graphicSettings, QObject* parent = 0);
+    explicit Rectangle(std::string name, QPointF point, uint8_t rectType, QObject* parent = 0);
     ~Rectangle();
 
     std::string name() const;

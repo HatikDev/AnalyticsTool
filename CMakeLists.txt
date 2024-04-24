@@ -14,7 +14,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql)
 
-include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/utils)
 
 set(PROJECT_SOURCES
     gui/rectangle.cpp
@@ -34,6 +34,9 @@ set(PROJECT_SOURCES
     model/picture.cpp
     model/dataset.h
     model/dataset.cpp
+
+    utils/utils.cpp
+    utils/utils.h
 
     include/constants.h
     include/analyticsexception.h

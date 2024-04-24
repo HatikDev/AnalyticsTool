@@ -1,5 +1,6 @@
 #include "constants.h"
 #include "rectangle.h"
+#include "utils.h"
 
 #include <QPen>
 #include <QPainter>
@@ -7,10 +8,10 @@
 #include <QPalette>
 
 Rectangle::Rectangle(std::string name, QPointF point,
-    RectangleGraphicSettings graphicSettings, QObject* parent)
+    uint8_t rectType, QObject* parent)
     : QObject{ parent }, QGraphicsItem()
     , m_name{ name }
-    , m_graphicSettings{ graphicSettings }
+    , m_graphicSettings{ utils::colorByClass(rectType), kLineWidth }
     , m_isSelected{ false }
 {
     setStartPoint(mapFromScene(point));
@@ -22,9 +23,7 @@ Rectangle::Rectangle(std::string name, QPointF point,
 }
 
 Rectangle::~Rectangle()
-{
-
-}
+{}
 
 std::string Rectangle::name() const
 {
