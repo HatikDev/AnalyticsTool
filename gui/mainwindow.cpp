@@ -74,7 +74,6 @@ void MainWindow::on_rectsListWidget_itemClicked(QListWidgetItem* item)
         auto rect = Model::instanse().picture().rectByName(elementName.toStdString());
         rect->select();
 
-        //ui->mainGraphicsView->update();
         m_paintScene->update();
     }
     catch (...) {
@@ -99,6 +98,7 @@ void MainWindow::on_rectAdded(std::shared_ptr<Rectangle> rect)
 
 void MainWindow::on_rectSelected(std::shared_ptr<Rectangle> rect)
 {
+    ui->rectsListWidget->items();
     // TODO: add handler
 }
 
