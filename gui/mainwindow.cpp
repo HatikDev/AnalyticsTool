@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QColorDialog>
 #include <QMessageBox>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -30,8 +31,6 @@ MainWindow::MainWindow(QWidget* parent)
 
     // connects for rects drawn by mouse
     connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
-
-    loadDataset("C:/Users/Sergey/Documents/cpp/AnalyticsTool/build/Debug/data");
 }
 
 MainWindow::~MainWindow()
@@ -53,6 +52,16 @@ void MainWindow::updateLabels()
     ui->counterLabel->setText(QString("%1/%2").arg(currentIndex + 1).arg(objectsCount));
 
     ui->pictureName->setText(Model::instanse().dataset().currentName().c_str());
+}
+
+void MainWindow::on_actionLoad_dataset_triggered()
+{
+    QString datasetPath = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+        ".",
+        QFileDialog::ShowDirsOnly
+        | QFileDialog::DontResolveSymlinks);
+
+    loadDataset(datasetPath.toStdString());
 }
 
 void MainWindow::on_selectColorButton_clicked()

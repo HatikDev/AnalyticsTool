@@ -102,8 +102,20 @@
      <height>25</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuDataset">
+    <property name="title">
+     <string>Dataset</string>
+    </property>
+    <addaction name="actionLoad_dataset"/>
+   </widget>
+   <addaction name="menuDataset"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionLoad_dataset">
+   <property name="text">
+    <string>Load dataset</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

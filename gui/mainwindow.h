@@ -34,6 +34,8 @@ private:
     void updateLabels();
 
 private slots:
+    void on_actionLoad_dataset_triggered();
+
     void on_selectColorButton_clicked();
 
     void on_rectsListWidget_itemClicked(QListWidgetItem *item);
