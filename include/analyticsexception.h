@@ -7,7 +7,7 @@
 class AnalyticsException : public std::exception {
 public:
     AnalyticsException(const char* mesg);
-    const char* what() const;
+    virtual const char* what() const noexcept;
 
 private:
     std::string m_message;

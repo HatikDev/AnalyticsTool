@@ -5,7 +5,7 @@ AnalyticsException::AnalyticsException(const char* mesg)
 {
 }
 
-const char* AnalyticsException::what() const
+const char* AnalyticsException::what() const noexcept
 {
     return m_message.c_str();
 }
