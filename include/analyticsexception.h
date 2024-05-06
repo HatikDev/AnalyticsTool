@@ -4,6 +4,13 @@
 #include <stdexcept>
 #include <string>
 
-using AnalyticsException = std::exception;
+class AnalyticsException : public std::exception {
+public:
+    AnalyticsException(const char* mesg);
+    const char* what() const;
+
+private:
+    std::string m_message;
+};
 
 #endif // ANALYTICS_EXCEPTION_H

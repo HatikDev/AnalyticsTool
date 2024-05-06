@@ -36,6 +36,7 @@ set(PROJECT_SOURCES
     model/dataset.cpp
 
     utils/utils.cpp
+    utils/analyticsexception.cpp
     utils/utils.h
 
     include/constants.h
