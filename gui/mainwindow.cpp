@@ -61,6 +61,9 @@ void MainWindow::on_actionLoad_dataset_triggered()
         QFileDialog::ShowDirsOnly
         | QFileDialog::DontResolveSymlinks);
 
+    if (datasetPath.isEmpty())
+        return;
+
     loadDataset(datasetPath.toStdString());
 }
 
