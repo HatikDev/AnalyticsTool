@@ -118,7 +118,8 @@ void Dataset::load(const std::string& path)
 
         if (m_classes.find(classType) != m_classes.end()) {
             m_classes = reserved;
-            throw AnalyticsException("There are 2 classes with 1 label - " + classType);
+            throw AnalyticsException("There are 2 classes with 1 label - "
+                                    + std::to_string(classType));
         }
 
         m_classes[classType] = classLabel;
