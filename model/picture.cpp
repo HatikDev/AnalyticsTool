@@ -85,19 +85,19 @@ void Picture::loadLabels(const std::string& path, const std::string& labelName)
     size_t type;
     QPoint startPoint;
     QPoint endPoint;
-    double x0, y0;
-    double x1, y1;
+    double width, height;
+    double centerX, centerY;
 
     while (getline(file, line)) {
         std::stringstream ss;
         ss << line;
-        ss >> type >> x0 >> y0 >> x1 >> y1;
+        ss >> type >> centerX >> centerY >> width >> height;
 
         // TODO: we need to multiply coordinates on image size
-        x0 *= 360;
-        y0 *= 360;
-        x1 *= 360;
-        y1 *= 360;
+        double x0 = (centerX - width / 2) * 360;
+        double y0 = (centerY - height / 2) * 360;
+        double x1 = x0 + width * 360;
+        double y1 = y0 + height * 360;
 
         // TODO: change type by predefined class
         m_rects.push_back(std::make_shared<Rectangle>(std::to_string(type), QPointF(x0, y0), type));
