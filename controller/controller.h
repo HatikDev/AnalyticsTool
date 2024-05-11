@@ -20,10 +20,6 @@ public:
     void setDefaultColor(QColor color);
 
     void addRect(std::shared_ptr<Rectangle> rect);
-
-    void nextPicture();
-
-    void previousPicture();
 };
 
 #endif // CONTROLLER_H

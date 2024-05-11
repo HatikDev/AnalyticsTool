@@ -30,7 +30,8 @@ PaintScene::PaintScene(QObject* parent)
 {
     setSceneRect(0, 0, 480, 360); // TODO: think about size
 
-    Model::instanse().picture().setPos(0, 0); // think about position
+    auto& picture = Model::instanse().picture();
+    picture.setPos(0, 0); // TODO: think about position
 
     addItem(&Model::instanse().picture());
 }

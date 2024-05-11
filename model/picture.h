@@ -30,6 +30,8 @@ public:
 
     // TODO: add removing rect
 
+    void scale(QSize size);
+
     std::shared_ptr<Rectangle> rectByName(const std::string& name) const;
 
 signals:
@@ -44,7 +46,7 @@ private:
 
     std::vector<std::shared_ptr<Rectangle>> m_rects;
 
-    void loadImage();
+    void loadImage(QSize size);
 
     void loadLabels(const std::string& path, const std::string& labelPaths);
 };

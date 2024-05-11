@@ -42,6 +42,10 @@ void MainWindow::loadDataset(const std::string& path)
 {
     m_controller.loadDataset(path);
 
+    auto image = Model::instanse().dataset().current();
+    image.scale(ui->mainGraphicsView->size());
+    Model::instanse().setPicture(std::move(image));
+
     updateLabels();
 }
 
@@ -145,12 +149,9 @@ void MainWindow::on_prevButton_clicked()
 {
     ui->rectsListWidget->clear();
 
-    try {
-        m_controller.previousPicture();
-    }
-    catch (...) {
-        ui->prevButton->setEnabled(false);
-    }
+    auto picture = Model::instanse().dataset().previous();
+    picture.scale(ui->mainGraphicsView->size());
+    Model::instanse().setPicture(std::move(picture));
 
     ui->nextButton->setEnabled(true);
 
@@ -161,12 +162,9 @@ void MainWindow::on_nextButton_clicked()
 {
     ui->rectsListWidget->clear();
 
-    try {
-        m_controller.nextPicture();
-    }
-    catch (...) {
-        ui->nextButton->setEnabled(false);
-    }
+    auto picture = Model::instanse().dataset().next();
+    picture.scale(ui->mainGraphicsView->size());
+    Model::instanse().setPicture(std::move(picture));
 
     ui->prevButton->setEnabled(true);
 

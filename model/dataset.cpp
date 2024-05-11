@@ -43,7 +43,8 @@ std::string Dataset::path() const
 
 Picture Dataset::current() const
 {
-    return Picture(m_path, m_names[m_currentIndex], QSize(360, 360)); // TODO: change size
+    // TODO: make constants
+    return Picture(m_path, m_names[m_currentIndex], QSize(2048, 2048));
 }
 
 std::string Dataset::currentName() const
