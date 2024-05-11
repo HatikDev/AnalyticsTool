@@ -35,7 +35,7 @@ Picture& Picture::operator=(Picture&& picture)
 
     // TODO: think about copy construct of this class.
     // We must load labels only one time
-    loadLabels(m_path, m_name);
+    loadLabels(m_path, m_name, {});
     return *this;
 }
 
@@ -70,6 +70,15 @@ std::shared_ptr<Rectangle> Picture::rectByName(const std::string& name) const
     throw AnalyticsException("Failed to find rectangle by name");
 }
 
+void Picture::loadData(const std::string& imageName, const std::string& labelName
+                       , const std::unordered_map<size_t, std::string>& classes)
+{
+    // TODO: refactor dataset & picture
+    m_name = imageName;
+    loadImage(m_size);
+    loadLabels(m_path, labelName, classes);
+}
+
 void Picture::loadImage(QSize size)
 {
     std::string imagePath = m_path + "/images/" + m_name + ".jpg";
@@ -78,7 +87,8 @@ void Picture::loadImage(QSize size)
     setPixmap(QPixmap::fromImage(imageScaled));
 }
 
-void Picture::loadLabels(const std::string& path, const std::string& labelName)
+void Picture::loadLabels(const std::string& path, const std::string& labelName
+                         , const std::unordered_map<size_t, std::string>& classes)
 {
     std::ifstream file(path + "/images_labels/" + labelName + ".txt");
     if (!file.is_open())

@@ -9,6 +9,8 @@
 #include <QImage>
 #include <QSize>
 
+class Dataset;
+
 class Picture : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
@@ -34,6 +36,9 @@ public:
 
     std::shared_ptr<Rectangle> rectByName(const std::string& name) const;
 
+    void loadData(const std::string& imagePath, const std::string& labelPath
+                  , const std::unordered_map<size_t, std::string>& classes);
+
 signals:
     void rectAdded(std::shared_ptr<Rectangle> rect);
 
@@ -48,7 +53,8 @@ private:
 
     void loadImage(QSize size);
 
-    void loadLabels(const std::string& path, const std::string& labelPaths);
+    void loadLabels(const std::string& path, const std::string& labelPaths
+                    , const std::unordered_map<size_t, std::string>& classes);
 };
 
 #endif // IMAGE_H
