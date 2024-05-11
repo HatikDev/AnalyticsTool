@@ -36,8 +36,6 @@ private:
 private slots:
     void on_actionLoad_dataset_triggered();
 
-    void on_selectColorButton_clicked();
-
     void on_rectsListWidget_itemClicked(QListWidgetItem *item);
 
     void on_rectAdded(std::shared_ptr<Rectangle> rect);

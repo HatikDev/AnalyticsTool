@@ -39,16 +39,6 @@ void Model::removeRect(std::shared_ptr<Rectangle> rect)
     // TODO: add remove objects
 }
 
-void Model::setCurrentSettings(const RectangleGraphicSettings &settings)
-{
-    m_currentSettings = settings;
-}
-
-RectangleGraphicSettings Model::currentSettings() const
-{
-    return m_currentSettings;
-}
-
 void Model::loadDataset(const std::string& path)
 {
     m_dataset = Dataset(path);
@@ -57,7 +47,6 @@ void Model::loadDataset(const std::string& path)
 Model::Model(QObject* parent)
     : QObject(parent)
     , m_picture{}
-    , m_currentSettings{ Qt::black, kLineWidth }
 {
     m_instanse = this;
 }

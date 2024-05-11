@@ -78,17 +78,6 @@
         </item>
        </layout>
       </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout" stretch="0">
-        <item>
-         <widget class="QPushButton" name="selectColorButton">
-          <property name="text">
-           <string>select color</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
      </layout>
     </item>
    </layout>

@@ -29,10 +29,6 @@ public:
 
     void removeRect(std::shared_ptr<Rectangle> rect);
 
-    void setCurrentSettings(const RectangleGraphicSettings& settings);
-
-    RectangleGraphicSettings currentSettings() const;
-
     void loadDataset(const std::string& path);
 
 private:
@@ -41,8 +37,6 @@ private:
     Picture m_picture;
 
     Dataset m_dataset;
-
-    RectangleGraphicSettings m_currentSettings;
 
     Model(QObject* parent = nullptr);
 };

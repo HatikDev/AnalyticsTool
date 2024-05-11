@@ -17,8 +17,6 @@ public:
 
     void loadDataset(const std::string& path);
 
-    void setDefaultColor(QColor color);
-
     void addRect(std::shared_ptr<Rectangle> rect);
 };
 

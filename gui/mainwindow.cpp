@@ -1,7 +1,9 @@
+#include "constants.h"
 #include "mainwindow.h"
 #include "model/model.h"
 #include "./ui_mainwindow.h"
 #include "paintscene.h"
+#include "utils.h"
 
 #include <QPushButton>
 #include <QColorDialog>
@@ -71,13 +73,6 @@ void MainWindow::on_actionLoad_dataset_triggered()
     loadDataset(datasetPath.toStdString());
 }
 
-void MainWindow::on_selectColorButton_clicked()
-{
-    QColor color = QColorDialog::getColor(Qt::yellow, this);
-
-    m_controller.setDefaultColor(color);
-}
-
 void MainWindow::on_rectsListWidget_itemClicked(QListWidgetItem* item)
 {
     auto elementName = item->text();
@@ -105,7 +100,7 @@ void MainWindow::on_rectAdded(std::shared_ptr<Rectangle> rect)
     m_controller.addRect(rect);
 
     QPixmap pixmap(10, 10);
-    pixmap.fill(rect->graphicSettings().color());
+    pixmap.fill(utils::colorByClass(rect->cellType()));
 
     QListWidgetItem* item = new QListWidgetItem(QIcon(pixmap), rect->name().c_str());
     item->setFlags(item->flags() | Qt::ItemIsEditable);

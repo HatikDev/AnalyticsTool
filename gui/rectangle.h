@@ -6,33 +6,13 @@
 
 #include <string>
 
-class RectangleGraphicSettings
-{
-public:
-    RectangleGraphicSettings(QColor color, size_t depthColor);
-    ~RectangleGraphicSettings();
-
-    QColor color() const { return m_color; }
-
-    size_t depthColor() const { return m_depthColor; }
-
-    void setColor(QColor color) { m_color = color; }
-
-    void setDepthColor(size_t depthColor) { m_depthColor = depthColor; }
-
-private:
-    QColor m_color;
-    size_t m_depthColor;
-    // TODO: add style
-};
-
 class Rectangle : public QObject, public QGraphicsItem
 {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
 
 public:
-    explicit Rectangle(std::string name, QPointF point, uint8_t rectType, QObject* parent = 0);
+    explicit Rectangle(std::string name, QPointF point, uint8_t cellType, QObject* parent = 0);
     ~Rectangle();
 
     std::string name() const;
@@ -51,13 +31,13 @@ public:
 
     void setEndPoint(QPointF point);
 
-    RectangleGraphicSettings graphicSettings() const;
-
-    void setGraphicSettings(RectangleGraphicSettings settings);
-
     void select();
 
     void deselect();
+
+    size_t cellType() const;
+
+    void setCellType(size_t cellType);
 
 public slots:
     void updateRomb();
@@ -67,12 +47,13 @@ signals:
 
 protected:
     std::string m_name;
-    RectangleGraphicSettings m_graphicSettings;
 
     QPointF m_startPoint;
     QPointF m_endPoint;
 
     bool m_isSelected;
+
+    size_t m_cellType;
 
     QRectF boundingRect() const;
 

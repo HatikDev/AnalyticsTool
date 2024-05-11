@@ -8,11 +8,11 @@
 #include <QPalette>
 
 Rectangle::Rectangle(std::string name, QPointF point,
-    uint8_t rectType, QObject* parent)
+    uint8_t cellType, QObject* parent)
     : QObject{ parent }, QGraphicsItem()
     , m_name{ name }
-    , m_graphicSettings{ utils::colorByClass(rectType), kLineWidth }
     , m_isSelected{ false }
+    , m_cellType{ cellType }
 {
     setStartPoint(mapFromScene(point));
     setEndPoint(mapFromScene(point));
@@ -79,16 +79,6 @@ void Rectangle::setEndPoint(QPointF point)
     emit pointChanged();
 }
 
-RectangleGraphicSettings Rectangle::graphicSettings() const
-{
-    return m_graphicSettings;
-}
-
-void Rectangle::setGraphicSettings(RectangleGraphicSettings settings)
-{
-    m_graphicSettings = settings;
-}
-
 void Rectangle::select()
 {
     m_isSelected = true;
@@ -97,6 +87,16 @@ void Rectangle::select()
 void Rectangle::deselect()
 {
     m_isSelected = false;
+}
+
+size_t Rectangle::cellType() const
+{
+    return m_cellType;
+}
+
+void Rectangle::setCellType(size_t cellType)
+{
+    m_cellType = cellType;
 }
 
 void Rectangle::updateRomb()
@@ -119,11 +119,11 @@ void Rectangle::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 {
     QPen pen;
     if (m_isSelected) {
-        pen = QPen(m_graphicSettings.color(), m_graphicSettings.depthColor(),
+        pen = QPen(utils::colorByClass(m_cellType), kLineWidth,
             Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     }
     else {
-        pen = QPen(m_graphicSettings.color(), m_graphicSettings.depthColor(),
+        pen = QPen(utils::colorByClass(m_cellType), kLineWidth,
             Qt::DashDotLine, Qt::RoundCap, Qt::RoundJoin);
     }
     painter->setPen(pen);
@@ -132,14 +132,14 @@ void Rectangle::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 
     if (m_isSelected) {
         painter->fillRect({ m_startPoint, m_endPoint },
-                          { m_graphicSettings.color(), Qt::BDiagPattern });
+                          { kDefaultRectColor, Qt::BDiagPattern });
 
         QPoint p1({ m_startPoint.toPoint().x(), m_startPoint.toPoint().y() });
         QPoint p2({ m_startPoint.toPoint().x(), m_endPoint.toPoint().y() });
         QPoint p3({ m_endPoint.toPoint().x(), m_startPoint.toPoint().y() });
         QPoint p4({ m_endPoint.toPoint().x(), m_endPoint.toPoint().y() });
 
-        painter->setBrush(m_graphicSettings.color());
+        painter->setBrush(kDefaultRectColor);
         painter->drawEllipse(p1, kSelectionCircleRadius, kSelectionCircleRadius);
         painter->drawEllipse(p2, kSelectionCircleRadius, kSelectionCircleRadius);
         painter->drawEllipse(p3, kSelectionCircleRadius, kSelectionCircleRadius);
@@ -149,11 +149,3 @@ void Rectangle::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
     Q_UNUSED(option)
         Q_UNUSED(widget)
 }
-
-RectangleGraphicSettings::RectangleGraphicSettings(QColor color, size_t depthColor)
-    : m_color{ color }
-    , m_depthColor{ depthColor }
-{}
-
-RectangleGraphicSettings::~RectangleGraphicSettings()
-{}
