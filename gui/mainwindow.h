@@ -33,6 +33,8 @@ private:
 
     void updateLabels();
 
+    void loadImage(Picture picture);
+
 private slots:
     void on_actionLoad_dataset_triggered();
 

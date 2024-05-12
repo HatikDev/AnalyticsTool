@@ -11,15 +11,17 @@ Picture::Picture()
     : QGraphicsPixmapItem() {}
 
 Picture::Picture(const std::string& path, const std::string& labelName, QSize size)
-    : QGraphicsPixmapItem(), m_path{ path }, m_name{ labelName }, m_size{ size }
+    : QGraphicsPixmapItem(), m_path{ path }, m_name{ labelName }
 {
+    auto sideSize = std::min(size.width(), size.height());
+    m_size = { sideSize, sideSize };
     loadImage(m_size);
 }
 
 Picture::Picture(Picture&& picture)
     : QGraphicsPixmapItem(), m_path{ std::move(picture.m_path) }
-    , m_name{ std::move(picture.m_name) }, m_size{ picture.m_size }
-    , m_rects{ std::move(picture.m_rects) }
+    , m_name{ std::move(picture.m_name) }
+    , m_rects{ std::move(picture.m_rects) }, m_size{ picture.m_size }
 {
     loadImage(m_size);
 }
@@ -57,8 +59,9 @@ void Picture::addRect(std::shared_ptr<Rectangle> rect)
 }
 
 void Picture::scale(QSize size) {
-    setPixmap(pixmap().scaled(size, Qt::KeepAspectRatio));
-    m_size = size;
+    auto sideSize = std::min(size.width(), size.height());
+    m_size = { sideSize, sideSize };
+    setPixmap(pixmap().scaled(m_size, Qt::KeepAspectRatio));
 }
 
 std::shared_ptr<Rectangle> Picture::rectByName(const std::string& name) const

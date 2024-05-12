@@ -44,9 +44,7 @@ void MainWindow::loadDataset(const std::string& path)
 {
     m_controller.loadDataset(path);
 
-    auto image = Model::instanse().dataset().current();
-    image.scale(ui->mainGraphicsView->size());
-    Model::instanse().setPicture(std::move(image));
+    loadImage(Model::instanse().dataset().current());
 
     updateLabels();
 }
@@ -58,6 +56,12 @@ void MainWindow::updateLabels()
     ui->counterLabel->setText(QString("%1/%2").arg(currentIndex + 1).arg(objectsCount));
 
     ui->pictureName->setText(Model::instanse().dataset().currentName().c_str());
+}
+
+void MainWindow::loadImage(Picture picture)
+{
+    picture.scale(ui->mainGraphicsView->size());
+    Model::instanse().setPicture(std::move(picture));
 }
 
 void MainWindow::on_actionLoad_dataset_triggered()
@@ -144,9 +148,7 @@ void MainWindow::on_prevButton_clicked()
 {
     ui->rectsListWidget->clear();
 
-    auto picture = Model::instanse().dataset().previous();
-    picture.scale(ui->mainGraphicsView->size());
-    Model::instanse().setPicture(std::move(picture));
+    loadImage(Model::instanse().dataset().previous());
 
     ui->nextButton->setEnabled(true);
 
@@ -157,9 +159,7 @@ void MainWindow::on_nextButton_clicked()
 {
     ui->rectsListWidget->clear();
 
-    auto picture = Model::instanse().dataset().next();
-    picture.scale(ui->mainGraphicsView->size());
-    Model::instanse().setPicture(std::move(picture));
+    loadImage(Model::instanse().dataset().next());
 
     ui->prevButton->setEnabled(true);
 
