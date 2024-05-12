@@ -24,6 +24,8 @@ public:
     explicit PaintScene(QObject *parent = nullptr);
      ~PaintScene();
 
+    void reset();
+
 signals:
     void rectAdded(std::shared_ptr<Rectangle> rect);
     void rectSelected(std::shared_ptr<Rectangle> rect);

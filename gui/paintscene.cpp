@@ -39,6 +39,19 @@ PaintScene::PaintScene(QObject* parent)
 PaintScene::~PaintScene()
 {}
 
+void PaintScene::reset()
+{
+    QList<QGraphicsItem*> rects = items();
+    for (auto* item : rects)
+        removeItem(item);
+
+    m_currentRect.reset();
+    counter = 0;
+    m_mouseState = MouseState::released;
+
+    addItem(&Model::instanse().picture());
+}
+
 void PaintScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     QGraphicsScene::mousePressEvent(event);

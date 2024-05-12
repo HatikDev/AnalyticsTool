@@ -42,6 +42,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadDataset(const std::string& path)
 {
+    m_paintScene->reset();
+
     m_controller.loadDataset(path);
 
     loadImage(Model::instanse().dataset().current());
@@ -148,6 +150,8 @@ void MainWindow::on_prevButton_clicked()
 {
     ui->rectsListWidget->clear();
 
+    m_paintScene->reset();
+
     loadImage(Model::instanse().dataset().previous());
 
     ui->nextButton->setEnabled(true);
@@ -158,6 +162,8 @@ void MainWindow::on_prevButton_clicked()
 void MainWindow::on_nextButton_clicked()
 {
     ui->rectsListWidget->clear();
+
+    m_paintScene->reset();
 
     loadImage(Model::instanse().dataset().next());
 
