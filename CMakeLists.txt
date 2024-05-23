@@ -58,6 +58,8 @@ qt_add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
+target_link_libraries(${PROJECT_NAME} PUBLIC ModelLauncher)
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
     WIN32_EXECUTABLE TRUE
 )

@@ -5,6 +5,8 @@
 #include "paintscene.h"
 #include "utils.h"
 
+#include "C:/Users/Dev/Documents/projects/AutomatedMicroscopy/ModelLauncher/include/modellauncher.h"
+
 #include <QPushButton>
 #include <QColorDialog>
 #include <QMessageBox>
@@ -33,6 +35,8 @@ MainWindow::MainWindow(QWidget* parent)
 
     // connects for rects drawn by mouse
     connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
+
+    loader::loadModel("");
 }
 
 MainWindow::~MainWindow()
