@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget* parent)
     // connects for rects drawn by mouse
     connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
 
-    loader::loadModel("");
+    loader::loadModel("", "");
 }
 
 MainWindow::~MainWindow()
