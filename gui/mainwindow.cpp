@@ -35,6 +35,8 @@ MainWindow::MainWindow(QWidget* parent)
 
     // connects for rects drawn by mouse
     connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
+
+    // loader::loadModel("", "");
 }
 
 MainWindow::~MainWindow()
@@ -181,5 +183,16 @@ void MainWindow::on_actionBrowseModel_triggered()
     if (fileName.isEmpty())
         return;
 
-    loader::loadModel(fileName.toStdString().c_str(), Model::instanse().dataset().path().c_str());
+    std::string datasetPath = Model::instanse().dataset().path();
+    loader::loadModel(fileName.toStdString().c_str(), datasetPath.data());
+
+    for (size_t i = 0; i < Model::instanse().dataset().count(); ++i) {
+        QString resultPath = QString("%1/images_results/%2.txt").arg(Model::instanse().dataset().path().c_str())
+                                        .arg(Model::instanse().dataset().currentName().c_str());
+        QString imagePath = QString("%1/images/%2.jpg").arg(Model::instanse().dataset().path().c_str())
+                                        .arg(Model::instanse().dataset().currentName().c_str());
+        loader::predict(imagePath.toStdString().c_str(), resultPath.toStdString().c_str());
+
+        Model::instanse().dataset().next(); // TODO: refactor this
+    }
 }
