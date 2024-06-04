@@ -5,7 +5,7 @@
 #include "paintscene.h"
 #include "utils.h"
 
-#include "C:/Users/Dev/Documents/projects/AutomatedMicroscopy/ModelLauncher/include/modellauncher.h"
+#include "C:/devEnvironment/AutomatedMicroscopy/ModelLauncher/include/modellauncher.h"
 
 #include <QPushButton>
 #include <QColorDialog>
@@ -35,8 +35,6 @@ MainWindow::MainWindow(QWidget* parent)
 
     // connects for rects drawn by mouse
     connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
-
-    loader::loadModel("", "");
 }
 
 MainWindow::~MainWindow()
@@ -70,7 +68,7 @@ void MainWindow::loadImage(Picture picture)
     Model::instanse().setPicture(std::move(picture));
 }
 
-void MainWindow::on_actionLoad_dataset_triggered()
+void MainWindow::on_actionLoadDataset_triggered()
 {
     QString datasetPath = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
         ".",
@@ -174,4 +172,14 @@ void MainWindow::on_nextButton_clicked()
     ui->prevButton->setEnabled(true);
 
     updateLabels();
+}
+
+void MainWindow::on_actionBrowseModel_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                             tr("Open onnx model"), ".", tr("All files (*.*)"));
+    if (fileName.isEmpty())
+        return;
+
+    loader::loadModel(fileName.toStdString().c_str(), Model::instanse().dataset().path().c_str());
 }

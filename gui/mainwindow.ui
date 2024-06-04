@@ -23,7 +23,7 @@
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="mainControlLayout" stretch="0,0,0">
+     <layout class="QVBoxLayout" name="mainControlLayout" stretch="0,0">
       <property name="sizeConstraint">
        <enum>QLayout::SetDefaultConstraint</enum>
       </property>
@@ -88,21 +88,33 @@
      <x>0</x>
      <y>0</y>
      <width>875</width>
-     <height>25</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDataset">
     <property name="title">
      <string>Dataset</string>
     </property>
-    <addaction name="actionLoad_dataset"/>
+    <addaction name="actionLoadDataset"/>
+   </widget>
+   <widget class="QMenu" name="menuLaunch">
+    <property name="title">
+     <string>Launch</string>
+    </property>
+    <addaction name="actionBrowseModel"/>
    </widget>
    <addaction name="menuDataset"/>
+   <addaction name="menuLaunch"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionLoad_dataset">
+  <action name="actionLoadDataset">
    <property name="text">
     <string>Load dataset</string>
+   </property>
+  </action>
+  <action name="actionBrowseModel">
+   <property name="text">
+    <string>Browse model</string>
    </property>
   </action>
  </widget>

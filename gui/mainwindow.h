@@ -36,7 +36,7 @@ private:
     void loadImage(Picture picture);
 
 private slots:
-    void on_actionLoad_dataset_triggered();
+    void on_actionLoadDataset_triggered();
 
     void on_rectsListWidget_itemClicked(QListWidgetItem *item);
 
@@ -49,5 +49,6 @@ private slots:
 
     void on_prevButton_clicked();
     void on_nextButton_clicked();
+    void on_actionBrowseModel_triggered();
 };
 #endif // MAINWINDOW_H
