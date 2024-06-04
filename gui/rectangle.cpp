@@ -11,7 +11,6 @@ Rectangle::Rectangle(std::string name, QPointF point,
     uint8_t cellType, QObject* parent)
     : QObject{ parent }, QGraphicsItem()
     , m_name{ name }
-    , m_isSelected{ false }
     , m_cellType{ cellType }
 {
     setStartPoint(mapFromScene(point));
@@ -99,6 +98,16 @@ void Rectangle::setCellType(size_t cellType)
     m_cellType = cellType;
 }
 
+void Rectangle::show()
+{
+    m_isVisible = true;
+}
+
+void Rectangle::hide()
+{
+    m_isVisible = false;
+}
+
 void Rectangle::updateRomb()
 {
     update((m_endPoint.x() > m_startPoint.x() ? m_startPoint.x() : m_endPoint.x()) - 5,
@@ -117,6 +126,9 @@ QRectF Rectangle::boundingRect() const
 
 void Rectangle::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
+    if (!m_isVisible)
+        return;
+
     QPen pen;
     if (m_isSelected) {
         pen = QPen(utils::colorByClass(m_cellType), kLineWidth,

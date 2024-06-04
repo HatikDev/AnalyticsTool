@@ -50,5 +50,7 @@ private slots:
     void on_prevButton_clicked();
     void on_nextButton_clicked();
     void on_actionBrowseModel_triggered();
+
+    void listWidgetItemChanged(QListWidgetItem* item);
 };
 #endif // MAINWINDOW_H

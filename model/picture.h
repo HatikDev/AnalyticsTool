@@ -34,6 +34,10 @@ public:
 
     std::shared_ptr<Rectangle> rectByName(const std::string& name) const;
 
+    void hideRect(size_t rectIndex);
+
+    void showRect(size_t rectIndex);
+
 signals:
     void rectAdded(std::shared_ptr<Rectangle> rect);
 

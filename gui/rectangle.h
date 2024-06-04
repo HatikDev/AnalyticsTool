@@ -39,6 +39,10 @@ public:
 
     void setCellType(size_t cellType);
 
+    void show();
+
+    void hide();
+
 public slots:
     void updateRomb();
 
@@ -49,9 +53,12 @@ protected:
     std::string m_name;
 
     QPointF m_startPoint;
+
     QPointF m_endPoint;
 
-    bool m_isSelected;
+    bool m_isSelected = false;
+
+    bool m_isVisible = true;
 
     size_t m_cellType;
 

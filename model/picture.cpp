@@ -73,6 +73,16 @@ std::shared_ptr<Rectangle> Picture::rectByName(const std::string& name) const
     throw AnalyticsException("Failed to find rectangle by name");
 }
 
+void Picture::hideRect(size_t rectIndex)
+{
+
+}
+
+void Picture::showRect(size_t rectIndex)
+{
+
+}
+
 void Picture::loadImage(QSize size)
 {
     std::string imagePath = m_path + "/images/" + m_name + ".jpg";
@@ -90,14 +100,17 @@ void Picture::loadLabels(const std::string& path, const std::string& labelName)
     m_rects.clear();
 
     std::string line;
-    size_t type;
+    uint8_t type;
     double width, height;
     double centerX, centerY;
 
+    auto& classes = Model::instanse().dataset().classes();
     while (getline(file, line)) {
         std::stringstream ss;
         ss << line;
         ss >> type >> centerX >> centerY >> width >> height;
+
+        type -= '0';
 
         // TODO: we need to multiply coordinates on image size
         double x0 = (centerX - width / 2) * m_size.width();
@@ -106,7 +119,9 @@ void Picture::loadLabels(const std::string& path, const std::string& labelName)
         double y1 = y0 + height * m_size.height();
 
         // TODO: change type by predefined class
-        m_rects.push_back(std::make_shared<Rectangle>(std::to_string(type), QPointF(x0, y0), type));
+        auto classNameIt = classes.find(type);
+        std::string className = classNameIt == classes.end() ? std::to_string(type) : classNameIt->second;
+        m_rects.push_back(std::make_shared<Rectangle>(className, QPointF(x0, y0), type));
         m_rects.back()->setEndPoint(QPointF(x1, y1));
 
         //connect(m_rects.get(), &Rectangle::rectSelected, this, &PaintScene::rectSelectionChanged);

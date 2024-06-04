@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget* parent)
     ui->mainGraphicsView->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
     ui->rectsListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->rectsListWidget, &QListWidget::itemChanged, this, &MainWindow::listWidgetItemChanged);
     connect(ui->rectsListWidget, &QListWidget::customContextMenuRequested,
         this, &MainWindow::provideContextMenu);
 
@@ -35,8 +36,6 @@ MainWindow::MainWindow(QWidget* parent)
 
     // connects for rects drawn by mouse
     connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
-
-    // loader::loadModel("", "");
 }
 
 MainWindow::~MainWindow()
@@ -113,7 +112,8 @@ void MainWindow::on_rectAdded(std::shared_ptr<Rectangle> rect)
     pixmap.fill(utils::colorByClass(rect->cellType()));
 
     QListWidgetItem* item = new QListWidgetItem(QIcon(pixmap), rect->name().c_str());
-    item->setFlags(item->flags() | Qt::ItemIsEditable);
+    item->setFlags(item->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+    item->setCheckState(Qt::Checked);
     ui->rectsListWidget->addItem(item);
 }
 
@@ -195,4 +195,14 @@ void MainWindow::on_actionBrowseModel_triggered()
 
         Model::instanse().dataset().next(); // TODO: refactor this
     }
+}
+
+void MainWindow::listWidgetItemChanged(QListWidgetItem* item)
+{
+    int index = ui->rectsListWidget->row(item);
+
+    if (item->checkState() == Qt::Checked)
+        Model::instanse().picture().rects()[index]->show();
+    else
+        Model::instanse().picture().rects()[index]->hide();
 }
