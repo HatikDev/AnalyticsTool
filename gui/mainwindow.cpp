@@ -1,3 +1,4 @@
+#include "analyticsexception.h"
 #include "constants.h"
 #include "mainwindow.h"
 #include "model/model.h"
@@ -47,7 +48,17 @@ void MainWindow::loadDataset(const std::string& path)
 {
     m_paintScene->reset();
 
-    m_controller.loadDataset(path);
+    try {
+        m_controller.loadDataset(path);
+    }
+    catch (const AnalyticsException& e) {
+        QMessageBox::critical(
+            this,
+            tr("Analytics Tool"),
+            tr("Dataset has invalid format"));
+
+        return;
+    }
 
     loadImage(Model::instanse().dataset().current());
 
@@ -182,6 +193,23 @@ void MainWindow::on_actionBrowseModel_triggered()
                                              tr("Open onnx model"), ".", tr("All files (*.*)"));
     if (fileName.isEmpty())
         return;
+
+    std::filesystem::path file = fileName.toStdString();
+    if (file.extension() != ".onnx") {
+        QMessageBox::critical(
+            this,
+            tr("Analytics Tool"),
+            tr("Selected file is not onnx model"));
+        return;
+    }
+
+    if (Model::instanse().dataset().count() == 0) {
+        QMessageBox::critical(
+            this,
+            tr("Analytics Tool"),
+            tr("Dataset is not loaded"));
+        return;
+    }
 
     std::string datasetPath = Model::instanse().dataset().path();
     loader::loadModel(fileName.toStdString().c_str(), datasetPath.data());

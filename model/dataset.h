@@ -3,6 +3,7 @@
 
 #include "picture.h"
 
+#include <filesystem>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -44,6 +45,8 @@ private:
     void swap(Dataset& dataset);
 
     void load(const std::string& path);
+
+    void checkCorrectness(const std::filesystem::path& path) const;
 };
 
 #endif // DATASET_H

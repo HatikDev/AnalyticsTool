@@ -2,7 +2,6 @@
 #include "dataset.h"
 
 #include <fstream>
-#include <filesystem>
 #include <sstream>
 
 namespace fs = std::filesystem;
@@ -97,6 +96,8 @@ void Dataset::swap(Dataset& dataset)
 
 void Dataset::load(const std::string& path)
 {
+    checkCorrectness(path);
+
     for (const auto& entry : fs::directory_iterator(path + "/images/"))
         m_names.push_back(entry.path().stem().string());
 
@@ -125,4 +126,23 @@ void Dataset::load(const std::string& path)
 
         m_classes[classType] = classLabel;
     }
+}
+
+void Dataset::checkCorrectness(const fs::path& path) const
+{
+    fs::path imagesPath = path / "images";
+    if (!fs::exists(imagesPath) || !fs::is_directory(imagesPath))
+        throw AnalyticsException("Image directory is not exist");
+
+    fs::path imagesLabelsPath = path / "images_labels";
+    if (!fs::exists(imagesLabelsPath) || !fs::is_directory(imagesLabelsPath))
+        throw AnalyticsException("image_labels directory is not exist");
+
+    fs::path imagesResultsPath = path / "images_results";
+    if (!fs::exists(imagesResultsPath) || !fs::is_directory(imagesResultsPath))
+        throw AnalyticsException("image_results directory is not exist");
+
+    fs::path predefinedClassesPath = path / "predefined_classes.txt";
+    if (!fs::exists(predefinedClassesPath) || !fs::is_regular_file(predefinedClassesPath))
+        throw AnalyticsException("Image directory is not exist");
 }
