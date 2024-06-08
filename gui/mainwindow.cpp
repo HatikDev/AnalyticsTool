@@ -125,13 +125,13 @@ void MainWindow::on_rectAdded(std::shared_ptr<Rectangle> rect)
     QListWidgetItem* item = new QListWidgetItem(QIcon(pixmap), rect->name().c_str());
     item->setFlags(item->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
     item->setCheckState(Qt::Checked);
-    ui->rectsListWidget->addItem(item);
+    ui->rectsListWidget->insertItem(rect->number(), item);
 }
 
 void MainWindow::on_rectSelected(std::shared_ptr<Rectangle> rect)
 {
-    //ui->rectsListWidget->items();
-    // TODO: add handler
+    // TODO: rewrite with models data
+    ui->rectsListWidget->setCurrentRow(rect->number());
 }
 
 void MainWindow::on_rectDeselected(std::shared_ptr<Rectangle> rect)
