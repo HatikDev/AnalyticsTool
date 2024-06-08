@@ -7,10 +7,11 @@
 #include <qdrawutil.h>
 #include <QPalette>
 
-Rectangle::Rectangle(std::string name, QPointF point,
+Rectangle::Rectangle(std::string name, size_t number, QPointF point,
     uint8_t cellType, QObject* parent)
     : QObject{ parent }, QGraphicsItem()
     , m_name{ name }
+    , m_number{ number }
     , m_cellType{ cellType }
 {
     setStartPoint(mapFromScene(point));
@@ -96,6 +97,11 @@ size_t Rectangle::cellType() const
 void Rectangle::setCellType(size_t cellType)
 {
     m_cellType = cellType;
+}
+
+size_t Rectangle::number() const
+{
+    return m_number;
 }
 
 void Rectangle::show()

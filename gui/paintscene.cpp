@@ -162,7 +162,7 @@ bool PaintScene::trySelectRect(const QGraphicsSceneMouseEvent& event)
 bool PaintScene::tryCreateLocalRect(const QGraphicsSceneMouseEvent& event)
 {
     std::string name = "New rect " + std::to_string(counter++);
-    m_currentRect = std::make_shared<Rectangle>(name, event.scenePos(), 0); // TODO: change type
+    m_currentRect = std::make_shared<Rectangle>(name, items().size(), event.scenePos(), 0); // TODO: change type
 
     addItem(m_currentRect.get());
 

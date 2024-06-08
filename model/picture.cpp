@@ -64,10 +64,10 @@ void Picture::scale(QSize size) {
     setPixmap(pixmap().scaled(m_size, Qt::KeepAspectRatio));
 }
 
-std::shared_ptr<Rectangle> Picture::rectByName(const std::string& name) const
+std::shared_ptr<Rectangle> Picture::rectByNumber(size_t number) const
 {
     for (auto& obj : m_rects)
-        if (name == obj->name())
+        if (number == obj->number())
             return obj;
 
     throw AnalyticsException("Failed to find rectangle by name");
@@ -105,6 +105,7 @@ void Picture::loadLabels(const std::string& path, const std::string& labelName)
     double centerX, centerY;
 
     auto& classes = Model::instanse().dataset().classes();
+    size_t counter = 0;
     while (getline(file, line)) {
         std::stringstream ss;
         ss << line;
@@ -121,7 +122,7 @@ void Picture::loadLabels(const std::string& path, const std::string& labelName)
         // TODO: change type by predefined class
         auto classNameIt = classes.find(type);
         std::string className = classNameIt == classes.end() ? std::to_string(type) : classNameIt->second;
-        m_rects.push_back(std::make_shared<Rectangle>(className, QPointF(x0, y0), type));
+        m_rects.push_back(std::make_shared<Rectangle>(className, counter++, QPointF(x0, y0), type));
         m_rects.back()->setEndPoint(QPointF(x1, y1));
 
         //connect(m_rects.get(), &Rectangle::rectSelected, this, &PaintScene::rectSelectionChanged);

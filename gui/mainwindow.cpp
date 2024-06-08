@@ -102,7 +102,7 @@ void MainWindow::on_rectsListWidget_itemClicked(QListWidgetItem* item)
         for (auto& obj : rects)
             obj->deselect();
 
-        auto rect = Model::instanse().picture().rectByName(elementName.toStdString());
+        auto rect = Model::instanse().picture().rectByNumber(ui->rectsListWidget->row(item));
         rect->select();
 
         m_paintScene->update();
@@ -230,7 +230,7 @@ void MainWindow::listWidgetItemChanged(QListWidgetItem* item)
     int index = ui->rectsListWidget->row(item);
 
     if (item->checkState() == Qt::Checked)
-        Model::instanse().picture().rects()[index]->show();
+        Model::instanse().picture().rectByNumber(index)->show();
     else
-        Model::instanse().picture().rects()[index]->hide();
+        Model::instanse().picture().rectByNumber(index)->hide();
 }

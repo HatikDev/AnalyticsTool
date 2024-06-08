@@ -12,7 +12,7 @@ class Rectangle : public QObject, public QGraphicsItem
     Q_INTERFACES(QGraphicsItem)
 
 public:
-    explicit Rectangle(std::string name, QPointF point, uint8_t cellType, QObject* parent = 0);
+    explicit Rectangle(std::string name, size_t number, QPointF point, uint8_t cellType, QObject* parent = 0);
     ~Rectangle();
 
     std::string name() const;
@@ -39,6 +39,8 @@ public:
 
     void setCellType(size_t cellType);
 
+    size_t number() const;
+
     void show();
 
     void hide();
@@ -61,6 +63,8 @@ protected:
     bool m_isVisible = true;
 
     size_t m_cellType;
+
+    size_t m_number;
 
     QRectF boundingRect() const;
 

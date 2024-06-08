@@ -32,7 +32,7 @@ public:
 
     void scale(QSize size);
 
-    std::shared_ptr<Rectangle> rectByName(const std::string& name) const;
+    std::shared_ptr<Rectangle> rectByNumber(size_t number) const;
 
     void hideRect(size_t rectIndex);
 
