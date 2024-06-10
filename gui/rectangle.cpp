@@ -9,7 +9,7 @@
 
 Rectangle::Rectangle(std::string name, size_t number, QPointF point,
     uint8_t cellType, QObject* parent)
-    : QObject{ parent }, QGraphicsItem()
+    : QObject(parent), QGraphicsItem()
     , m_name{ name }
     , m_number{ number }
     , m_cellType{ cellType }
@@ -19,7 +19,7 @@ Rectangle::Rectangle(std::string name, size_t number, QPointF point,
     /* Подключаем сигнал изменения координат к слоту запуска обновления содержимого объекта
      * Сигнал и слот присутствуют в базовом классе
      * */
-    connect(this, &Rectangle::pointChanged, this, &Rectangle::updateRomb);
+    //connect(this, &Rectangle::pointChanged, this, &Rectangle::updateRomb);
 }
 
 Rectangle::~Rectangle()
@@ -87,6 +87,11 @@ void Rectangle::select()
 void Rectangle::deselect()
 {
     m_isSelected = false;
+}
+
+bool Rectangle::isSelected() const
+{
+    return m_isSelected;
 }
 
 size_t Rectangle::cellType() const

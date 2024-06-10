@@ -9,10 +9,10 @@ Controller::~Controller()
 
 void Controller::loadDataset(const std::string& path)
 {
-    Model::instanse().loadDataset(path);
+    //Model::instanse().loadDataset(path);
 }
 
 void Controller::addRect(std::shared_ptr<Rectangle> rect)
 {
-    Model::instanse().addRect(rect);
+    //Model::instanse().addRect(rect);
 }

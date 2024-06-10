@@ -48,15 +48,15 @@ const std::string& Picture::name() const
     return m_name;
 }
 
-const std::vector<std::shared_ptr<Rectangle>>& Picture::rects() const
-{
-    return m_rects;
-}
-
-void Picture::addRect(std::shared_ptr<Rectangle> rect)
-{
-    m_rects.push_back(rect);
-}
+//const std::vector<std::shared_ptr<Rectangle>>& Picture::rects() const
+//{
+//    return m_rects;
+//}
+//
+//void Picture::addRect(std::shared_ptr<Rectangle> rect)
+//{
+//    m_rects.push_back(rect);
+//}
 
 void Picture::scale(QSize size) {
     auto sideSize = std::min(size.width(), size.height());
@@ -93,41 +93,41 @@ void Picture::loadImage(QSize size)
 
 void Picture::loadLabels(const std::string& path, const std::string& labelName)
 {
-    std::ifstream file(path + "/images_labels/" + labelName + ".txt");
-    if (!file.is_open())
-        throw AnalyticsException(std::string("Failed to open file" + labelName).c_str());
+    //std::ifstream file(path + "/images_labels/" + labelName + ".txt");
+    //if (!file.is_open())
+    //    throw AnalyticsException(std::string("Failed to open file" + labelName).c_str());
 
-    m_rects.clear();
+    //m_rects.clear();
 
-    std::string line;
-    uint8_t type;
-    double width, height;
-    double centerX, centerY;
+    //std::string line;
+    //uint8_t type;
+    //double width, height;
+    //double centerX, centerY;
 
-    auto& classes = Model::instanse().dataset().classes();
-    size_t counter = 0;
-    while (getline(file, line)) {
-        std::stringstream ss;
-        ss << line;
-        ss >> type >> centerX >> centerY >> width >> height;
+    //auto& classes = Model::instanse().dataset().classes();
+    //size_t counter = 0;
+    //while (getline(file, line)) {
+    //    std::stringstream ss;
+    //    ss << line;
+    //    ss >> type >> centerX >> centerY >> width >> height;
 
-        type -= '0';
+    //    type -= '0';
 
-        // TODO: we need to multiply coordinates on image size
-        double x0 = (centerX - width / 2) * m_size.width();
-        double y0 = (centerY - height / 2) * m_size.height();
-        double x1 = x0 + width * m_size.width();
-        double y1 = y0 + height * m_size.height();
+    //    // TODO: we need to multiply coordinates on image size
+    //    double x0 = (centerX - width / 2) * m_size.width();
+    //    double y0 = (centerY - height / 2) * m_size.height();
+    //    double x1 = x0 + width * m_size.width();
+    //    double y1 = y0 + height * m_size.height();
 
-        // TODO: change type by predefined class
-        auto classNameIt = classes.find(type);
-        std::string className = classNameIt == classes.end() ? std::to_string(type) : classNameIt->second;
-        m_rects.push_back(std::make_shared<Rectangle>(className, counter++, QPointF(x0, y0), type));
-        m_rects.back()->setEndPoint(QPointF(x1, y1));
+    //    // TODO: change type by predefined class
+    //    auto classNameIt = classes.find(type);
+    //    std::string className = classNameIt == classes.end() ? std::to_string(type) : classNameIt->second;
+    //    m_rects.push_back(std::make_shared<Rectangle>(className, counter++, QPointF(x0, y0), type));
+    //    m_rects.back()->setEndPoint(QPointF(x1, y1));
 
-        //connect(m_rects.get(), &Rectangle::rectSelected, this, &PaintScene::rectSelectionChanged);
-        //connect(m_rects.get(), &Rectangle::rectDeselected, this, &PaintScene::rectSelectionChanged);
-        // TODO: add disconnection
-        emit rectAdded(m_rects.back());
-    }
+    //    //connect(m_rects.get(), &Rectangle::rectSelected, this, &PaintScene::rectSelectionChanged);
+    //    //connect(m_rects.get(), &Rectangle::rectDeselected, this, &PaintScene::rectSelectionChanged);
+    //    // TODO: add disconnection
+    //    emit rectAdded(m_rects.back());
+    //}
 }

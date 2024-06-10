@@ -26,7 +26,7 @@ public:
 
     const std::vector<std::shared_ptr<Rectangle>>& rects() const;
 
-    void addRect(std::shared_ptr<Rectangle> rect);
+    //void addRect(std::shared_ptr<Rectangle> rect);
 
     // TODO: add removing rect
 

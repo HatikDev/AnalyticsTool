@@ -4,49 +4,73 @@
 #include <stdexcept>
 #include <QColor>
 
-Model* Model::m_instanse = nullptr;
+//Model* Model::m_instanse = nullptr;
+//
+//Model& Model::instanse()
+//{
+//    if (!m_instanse)
+//        m_instanse = new Model();
+//
+//    return *m_instanse;
+//}
+//
+//Picture& Model::picture()
+//{
+//    return m_picture;
+//}
+//
+//void Model::setPicture(Picture&& picture)
+//{
+//    m_picture = std::move(picture);
+//}
+//
+//Dataset& Model::dataset()
+//{
+//    return m_dataset;
+//}
+//
+//void Model::addRect(std::shared_ptr<Rectangle> rect)
+//{
+//    m_picture.addRect(rect);
+//}
+//
+//void Model::removeRect(std::shared_ptr<Rectangle> rect)
+//{
+//    // TODO: add remove objects
+//}
+//
+//void Model::loadDataset(const std::string& path)
+//{
+//    m_dataset = Dataset(path);
+//}
 
-Model& Model::instanse()
+//RectModel::RectModel(QObject* parent)
+//    : QObject(parent)
+//    , m_picture{}
+//{
+//    m_instanse = this;
+//}
+
+RectModel::RectModel(QObject* parent)
+{}
+
+int RectModel::rowCount(const QModelIndex& parent) const
 {
-    if (!m_instanse)
-        m_instanse = new Model();
-
-    return *m_instanse;
+    return m_rects.size();
 }
 
-Picture& Model::picture()
+int RectModel::columnCount(const QModelIndex& parent) const
 {
-    return m_picture;
+    return 1;
 }
 
-void Model::setPicture(Picture&& picture)
+QVariant RectModel::data(const QModelIndex& index, int role) const
 {
-    m_picture = std::move(picture);
-}
+    int row = index.row();
+    int column = index.column();
 
-Dataset& Model::dataset()
-{
-    return m_dataset;
-}
+    if (row < 0 || row >= m_rects.size() || column != 0 || role != Qt::DisplayRole)
+        return QVariant();
 
-void Model::addRect(std::shared_ptr<Rectangle> rect)
-{
-    m_picture.addRect(rect);
-}
-
-void Model::removeRect(std::shared_ptr<Rectangle> rect)
-{
-    // TODO: add remove objects
-}
-
-void Model::loadDataset(const std::string& path)
-{
-    m_dataset = Dataset(path);
-}
-
-Model::Model(QObject* parent)
-    : QObject(parent)
-    , m_picture{}
-{
-    m_instanse = this;
+    return m_rects[column]->name().c_str();
 }

@@ -33,7 +33,7 @@ signals:
     void rectRemove(std::shared_ptr<Rectangle> rect); // TODO: add deleting rect
 
 private:
-    std::shared_ptr<Rectangle> m_currentRect = nullptr;
+    Rectangle* m_currentRect = nullptr;
 
     static size_t counter;
 
@@ -47,7 +47,7 @@ private:
 
     bool tryEditRect(const QGraphicsSceneMouseEvent& event);
 
-    bool trySelectRect(const QGraphicsSceneMouseEvent& event);
+    //bool trySelectRect(const QGraphicsSceneMouseEvent& event);
 
     bool tryCreateLocalRect(const QGraphicsSceneMouseEvent& event);
 
@@ -55,6 +55,8 @@ public slots:
     // Calls when rect was added not from PaintScene.
     // For instance, loaded from dataset
     void on_rectAdded(std::shared_ptr<Rectangle> rect);
+
+    void itemClicked();
 
 private slots:
     void rectSelectionChanged();

@@ -35,6 +35,8 @@ public:
 
     void deselect();
 
+    bool isSelected() const;
+
     size_t cellType() const;
 
     void setCellType(size_t cellType);
