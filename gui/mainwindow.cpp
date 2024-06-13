@@ -13,20 +13,31 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
+namespace fs = std::filesystem;
+
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , m_paintScene{ new PaintScene() }
+    , m_rectModel{ new RectModel() }
 {
     ui->setupUi(this);
 
-    RectModel* model = new RectModel;
-    ui->rectsListView->setModel(model);
+    ui->rectsListView->setModel(m_rectModel);
 
-    //connect(m_paintScene, &PaintScene::rectSelected, this, &MainWindow::on_rectSelected);
-    //connect(m_paintScene, &PaintScene::rectDeselected, this, &MainWindow::on_rectDeselected);
+    connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
+
+    connect(m_paintScene, &PaintScene::rectSelected, this, &MainWindow::on_paintSceneRectSelected);
+
+    auto* rectSelectionModel = ui->rectsListView->selectionModel();
+    connect(rectSelectionModel, &QItemSelectionModel::selectionChanged, this, &MainWindow::on_rectsListSelectionChanged);
+
+    connect(m_paintScene, &PaintScene::rectSelected, this, &MainWindow::on_paintSceneRectSelected);
+
+    connect(m_paintScene, &PaintScene::rectRemove, this, &MainWindow::on_rectRemoved);
 
     ui->mainGraphicsView->setScene(m_paintScene);
+
     //ui->mainGraphicsView->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
     //ui->rectsListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -47,8 +58,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::loadDataset(const std::string& path)
+void MainWindow::loadDataset(const fs::path& path)
 {
+    m_dataset.reset(new Dataset(path));
+
+    m_paintScene->loadData(*m_dataset->data());
     /*m_paintScene->reset();
 
     try {
@@ -81,6 +95,29 @@ void MainWindow::loadImage(Picture picture)
 {
     /*picture.scale(ui->mainGraphicsView->size());
     Model::instanse().setPicture(std::move(picture));*/
+}
+
+void MainWindow::keyPressEvent(QKeyEvent* keyEvent)
+{
+    switch (keyEvent->key()) {
+    case Qt::Key_Delete:
+    case Qt::Key_Backspace:
+        auto selected = ui->rectsListView->selectionModel()->selection().indexes();
+        if (selected.size() == 0)
+            return;
+
+        int id = m_rectModel->data(selected.at(0), Qt::UserRole).toInt();
+
+        for (auto* item : m_paintScene->items()) {
+            auto* rect = static_cast<Rectangle*>(item);
+            if (rect && rect->number() == id) {
+                m_rectModel->deleteRect(rect);
+                m_paintScene->removeItem(item);
+                break;
+            }
+        }
+        break;
+    }
 }
 
 void MainWindow::on_actionLoadDataset_triggered()
@@ -118,33 +155,41 @@ void MainWindow::on_rectsListWidget_itemClicked(QListWidgetItem* item)
     }*/
 }
 
-void MainWindow::on_rectAdded(std::shared_ptr<Rectangle> rect)
+void MainWindow::on_rectAdded(Rectangle* rect)
 {
-    //m_controller.addRect(rect);
-
-    //QPixmap pixmap(10, 10);
-    //pixmap.fill(utils::colorByClass(rect->cellType()));
-
-    //QListWidgetItem* item = new QListWidgetItem(QIcon(pixmap), rect->name().c_str());
-    //item->setFlags(item->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
-    //item->setCheckState(Qt::Checked);
-    //ui->rectsListWidget->insertItem(rect->number(), item);
+    m_rectModel->addRect(rect);
 }
 
-void MainWindow::on_rectSelected(std::shared_ptr<Rectangle> rect)
+void MainWindow::on_paintSceneRectSelected(Rectangle* rect)
 {
-    // TODO: rewrite with models data
-    //ui->rectsListWidget->setCurrentRow(rect->number());
+    int row = m_rectModel->rowByRect(rect);
+    QItemSelection selected(m_rectModel->index(row), m_rectModel->index(row));
+
+    auto* model = ui->rectsListView->selectionModel();
+    model->select(selected, QItemSelectionModel::ClearAndSelect);
 }
 
-void MainWindow::on_rectDeselected(std::shared_ptr<Rectangle> rect)
+void MainWindow::on_rectsListSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
-    // TODO: add handler
+    auto deselectedList = deselected.indexes();
+    for (auto& item : deselectedList) {
+        size_t number = m_rectModel->data(item, Qt::UserRole).toInt();
+        m_paintScene->on_rectDeselected(number);
+    }
+
+    auto selectedList = selected.indexes();
+    if (selectedList.size() == 0)
+        return;
+
+    size_t number = m_rectModel->data(selectedList.at(0), Qt::UserRole).toInt();
+    m_paintScene->on_rectSelected(number);
 }
 
-void MainWindow::on_rectRemoved(std::shared_ptr<Rectangle> rect)
+void MainWindow::on_rectRemoved(Rectangle* rect)
 {
     // TODO: add handles of removing rects
+    m_rectModel->deleteRect(rect);
+    delete rect;
 }
 
 void MainWindow::provideContextMenu(const QPoint& pos)

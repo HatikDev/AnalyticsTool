@@ -2,10 +2,12 @@
 #define PAINTSCENE_H
 
 #include "model/picture.h"
+#include "model/dataset.h"
 #include "gui/rectangle.h"
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+#include <QKeyEvent>
 
 #include <memory>
 
@@ -26,11 +28,13 @@ public:
 
     void reset();
 
+    void loadData(const IDataObject& dataObject);
+
 signals:
-    void rectAdded(std::shared_ptr<Rectangle> rect);
-    void rectSelected(std::shared_ptr<Rectangle> rect);
-    void rectDeselected(std::shared_ptr<Rectangle> rect);
-    void rectRemove(std::shared_ptr<Rectangle> rect); // TODO: add deleting rect
+    void rectAdded(Rectangle* rect);
+    void rectSelected(Rectangle* rect);
+    void rectDeselected(Rectangle* rect);
+    void rectRemove(Rectangle* rect); // TODO: add deleting rect
 
 private:
     Rectangle* m_currentRect = nullptr;
@@ -45,21 +49,22 @@ private:
 
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
-    bool tryEditRect(const QGraphicsSceneMouseEvent& event);
+    void keyPressEvent(QKeyEvent* keyEvent) override;
 
-    //bool trySelectRect(const QGraphicsSceneMouseEvent& event);
+    bool tryEditRect(const QGraphicsSceneMouseEvent& event);
 
     bool tryCreateLocalRect(const QGraphicsSceneMouseEvent& event);
 
 public slots:
     // Calls when rect was added not from PaintScene.
     // For instance, loaded from dataset
-    void on_rectAdded(std::shared_ptr<Rectangle> rect);
 
-    void itemClicked();
+    void on_rectSelected(size_t rectId);
+
+    void on_rectDeselected(size_t rectId);
 
 private slots:
-    void rectSelectionChanged();
+    void itemClicked();
 };
 
 #endif // PAINTSCENE_H

@@ -69,8 +69,57 @@ QVariant RectModel::data(const QModelIndex& index, int role) const
     int row = index.row();
     int column = index.column();
 
-    if (row < 0 || row >= m_rects.size() || column != 0 || role != Qt::DisplayRole)
+    if (row < 0 || row >= m_rects.size() || column != 0 || (role != Qt::DisplayRole && role != Qt::UserRole))
         return QVariant();
 
-    return m_rects[column]->name().c_str();
+    auto it = m_rects.begin();
+    std::advance(it, row);
+
+    if (role == Qt::UserRole)
+        return (*it).second->number();
+
+    return (*it).second->name().c_str();
+}
+
+void RectModel::addRect(Rectangle* rect)
+{
+    beginInsertRows(QModelIndex(), m_rects.size(), m_rects.size() + 1);
+    m_rects[rect->number()] = rect;
+    endInsertRows();
+}
+
+void RectModel::selectRect(Rectangle* rect)
+{
+    auto it = std::find_if(m_rects.begin(), m_rects.end(),
+        [rect](auto& existing) { return existing.second->number() == rect->number(); });
+
+    //it->second->select();
+}
+
+void RectModel::deselectRect(Rectangle* rect)
+{
+    auto it = std::find_if(m_rects.begin(), m_rects.end(),
+        [rect](auto& existing) { return existing.second->number() == rect->number(); });
+
+    //it->second->deselect();
+}
+
+void RectModel::deleteRect(Rectangle* rect)
+{
+    auto it = m_rects.find(rect->number());
+    if (it == m_rects.end())
+        return;
+
+    beginRemoveRows(QModelIndex(), 0, m_rects.size() - 1);
+    m_rects.erase(rect->number());
+    endRemoveRows();
+}
+
+int RectModel::rowByRect(Rectangle* rect) const
+{
+    auto it = m_rects.find(rect->number());
+    if (it == m_rects.end())
+        return -1;
+
+    return std::distance(m_rects.begin(), it);
 }

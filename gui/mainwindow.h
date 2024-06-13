@@ -3,6 +3,8 @@
 
 #include "rectangle.h"
 #include "paintscene.h"
+#include "model/model.h"
+#include "model/dataset.h"
 
 #include <QMainWindow>
 #include <QListWidgetItem>
@@ -22,7 +24,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void loadDataset(const std::string& path);
+    void loadDataset(const std::filesystem::path& path);
 
 private:
     Ui::MainWindow *ui;
@@ -31,19 +33,25 @@ private:
 
     PaintScene* m_paintScene;
 
+    RectModel* m_rectModel;
+
+    std::shared_ptr<Dataset> m_dataset;
+
     void updateLabels();
 
     void loadImage(Picture picture);
+
+    void keyPressEvent(QKeyEvent* keyEvent) override;
 
 private slots:
     void on_actionLoadDataset_triggered();
 
     void on_rectsListWidget_itemClicked(QListWidgetItem *item);
 
-    void on_rectAdded(std::shared_ptr<Rectangle> rect);
-    void on_rectSelected(std::shared_ptr<Rectangle> rect);
-    void on_rectDeselected(std::shared_ptr<Rectangle> rect);
-    void on_rectRemoved(std::shared_ptr<Rectangle> rect);
+    void on_rectAdded(Rectangle* rect);
+    void on_paintSceneRectSelected(Rectangle* rect);
+    void on_rectsListSelectionChanged(const QItemSelection& selected, const QItemSelection& delesected);
+    void on_rectRemoved(Rectangle* rect);
 
     void provideContextMenu(const QPoint& pos);
 

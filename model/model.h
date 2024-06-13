@@ -46,10 +46,23 @@ class RectModel : public QAbstractListModel {
 	Q_OBJECT
 public:
     RectModel(QObject* parent = 0);
+
     int rowCount(const QModelIndex& parent = QModelIndex()) const;
+
     int columnCount(const QModelIndex& parent = QModelIndex()) const;
+
     QVariant data(const QModelIndex& index, int role) const;
 
+    void addRect(Rectangle* rect);
+
+    void selectRect(Rectangle* rect);
+
+    void deselectRect(Rectangle* rect);
+
+    void deleteRect(Rectangle* rect);
+
+    int rowByRect(Rectangle* rect) const;
+
 private:
-    std::vector<std::shared_ptr<Rectangle>> m_rects;
+    std::unordered_map<size_t, Rectangle*> m_rects;
 };

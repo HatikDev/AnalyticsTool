@@ -8,45 +8,115 @@
 #include <vector>
 #include <unordered_map>
 
-class Dataset {
+class IDataObject {
 public:
-    Dataset();
-    Dataset(const std::string& path);
-    Dataset(const Dataset& other);
-    Dataset(Dataset&& other);
-    Dataset& operator=(Dataset other);
-    ~Dataset();
+	IDataObject() {};
+	virtual ~IDataObject() {}
 
-    std::string path() const;
+	virtual size_t objectClass() const = 0;
 
-    Picture current() const;
+	virtual void data() const = 0;
 
-    std::string currentName() const;
+	virtual std::string name() const = 0;
+};
 
-    const std::unordered_map<size_t, std::string>& classes() const;
+class BloodCellDataObjectV1 : public IDataObject {
+public:
+	BloodCellDataObjectV1(std::filesystem::path datasetPath, std::filesystem::path imgPath);
+	~BloodCellDataObjectV1() override;
 
-    Picture next();
+	size_t objectClass() const override;
 
-    Picture previous();
+	void data() const override;
 
-    size_t currentIndex() const;
-
-    size_t count() const;
+	std::string name() const override;
 
 private:
-    std::string m_path;
+	size_t m_class;
 
-    size_t m_currentIndex = 0;
+	std::filesystem::path m_imgPath;
+};
 
-    std::vector<std::string> m_names;
+class Dataset {
+public:
+//    Dataset();
+//    Dataset(const std::string& path);
+//    Dataset(const Dataset& other);
+//    Dataset(Dataset&& other);
+//    Dataset& operator=(Dataset other);
+//    ~Dataset();
+//
+//    std::string path() const;
+//
+//    Picture current() const;
+//
+//    std::string currentName() const;
+//
+//    const std::unordered_map<size_t, std::string>& classes() const;
+//
+//    Picture next();
+//
+//    Picture previous();
+//
+//    size_t currentIndex() const;
+//
+//    size_t count() const;
+//
+//private:
+//    std::string m_path;
+//
+//    size_t m_currentIndex = 0;
+//
+//    std::vector<std::string> m_names;
+//
+//    std::unordered_map<size_t, std::string> m_classes;
+//
+//    void swap(Dataset& dataset);
+//
+//    void load(const std::string& path);
+//
+//    void checkCorrectness(const std::filesystem::path& path) const;
 
-    std::unordered_map<size_t, std::string> m_classes;
+public:
+	Dataset(std::filesystem::path datasetPath, size_t batchSize = 10);
+	Dataset(const Dataset& dataset) = delete;
+	Dataset(Dataset&& dataset) = delete;
+	Dataset& operator=(const Dataset& dataset) = delete;
+	Dataset& operator=(Dataset&& dataset) = delete;
 
-    void swap(Dataset& dataset);
+	size_t batchSize() const;
 
-    void load(const std::string& path);
+	size_t currentIndex() const;
 
-    void checkCorrectness(const std::filesystem::path& path) const;
+	std::shared_ptr<IDataObject> data();
+
+	void setIndex(size_t index);
+
+	void next();
+
+	void previous();
+
+private:
+	const size_t kBatchSize;
+
+	const std::filesystem::path kDatasetPath;
+
+	size_t m_currentIndex = 0;
+
+	size_t m_batchStart = 0;
+
+	std::vector<std::shared_ptr<IDataObject>> m_batch;
+
+	std::unordered_map<size_t, std::string> m_classes;
+
+	std::vector<std::string> m_names; // remove it
+
+	void load(size_t startIndex);
+
+	void loadClasses();
+
+	// Maybe it depends from smth??
+	void checkDatasetFormatCorrectness() const;
 };
 
 #endif // DATASET_H

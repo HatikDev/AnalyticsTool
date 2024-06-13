@@ -13,6 +13,8 @@ class Rectangle : public QObject, public QGraphicsItem
 
 public:
     explicit Rectangle(std::string name, size_t number, QPointF point, uint8_t cellType, QObject* parent = 0);
+    Rectangle(const Rectangle&) = delete;
+    Rectangle(Rectangle&&) = delete;
     ~Rectangle();
 
     std::string name() const;

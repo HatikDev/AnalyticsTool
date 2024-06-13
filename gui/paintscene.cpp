@@ -25,6 +25,8 @@ namespace
 
 size_t PaintScene::counter = 0;
 
+namespace fs = std::filesystem;
+
 PaintScene::PaintScene(QObject* parent)
     : QGraphicsScene{ parent }
 {
@@ -61,6 +63,9 @@ void PaintScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         return;
     }
 
+    if (selectedItems().size() != 0)
+        return;
+
     //if (trySelectRect(*event)) {
     //    m_mouseState = MouseState::selecting;
     //    return;
@@ -91,7 +96,11 @@ void PaintScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
     if (m_mouseState == MouseState::creating) {
         connect(this, &QGraphicsScene::selectionChanged, this, &PaintScene::itemClicked);
+        m_currentRect = nullptr;
+    }
 
+    if (m_mouseState == MouseState::editing) {
+        //m_currentRect->setFlag(QGraphicsItem::ItemIsMovable, true);
         m_currentRect = nullptr;
     }
 
@@ -100,73 +109,66 @@ void PaintScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     update();
 }
 
+void PaintScene::keyPressEvent(QKeyEvent* keyEvent)
+{
+    switch (keyEvent->key()) {
+    case Qt::Key_Delete:
+    case Qt::Key_Backspace:
+        auto items = selectedItems();
+        if (items.size() == 0)
+            return;
+
+        emit rectRemove(static_cast<Rectangle*>(items.at(0)));
+        //removeItem(items.at(0));
+    }
+}
+
 bool PaintScene::tryEditRect(const QGraphicsSceneMouseEvent& event)
 {
-    /*for (auto& rect : Model::instanse().picture().rects()) {
-        if (distance(rect->topLeft(), event.scenePos()) <= kSelectionCircleRadius) {
-            m_currentRect = rect;
-            m_currentRect->setStartPoint(rect->bottomRight());
-            m_currentRect->setEndPoint(rect->topLeft());
+    for (auto* rect : selectedItems()) {
+        auto boundingRect = rect->boundingRect();
+        if (distance(boundingRect.topLeft(), event.scenePos()) <= kSelectionCircleRadius) {
+            m_currentRect = static_cast<Rectangle*>(rect);
+            m_currentRect->setFlag(QGraphicsItem::ItemIsMovable, false);
+            m_currentRect->setStartPoint(boundingRect.bottomRight());
+            m_currentRect->setEndPoint(boundingRect.topLeft());
             return true;
         }
 
-        if (distance(rect->topRight(), event.scenePos()) <= kSelectionCircleRadius) {
-            m_currentRect = rect;
-            m_currentRect->setStartPoint(rect->bottomLeft());
-            m_currentRect->setEndPoint(rect->topRight());
+        if (distance(boundingRect.topRight(), event.scenePos()) <= kSelectionCircleRadius) {
+            m_currentRect = static_cast<Rectangle*>(rect);
+            m_currentRect->setFlag(QGraphicsItem::ItemIsMovable, false);
+            m_currentRect->setStartPoint(boundingRect.bottomLeft());
+            m_currentRect->setEndPoint(boundingRect.topRight());
             return true;
         }
 
-        if (distance(rect->bottomLeft(), event.scenePos()) <= kSelectionCircleRadius) {
-            m_currentRect = rect;
-            m_currentRect->setStartPoint(rect->topRight());
-            m_currentRect->setEndPoint(rect->bottomLeft());
+        if (distance(boundingRect.bottomLeft(), event.scenePos()) <= kSelectionCircleRadius) {
+            m_currentRect = static_cast<Rectangle*>(rect);
+            m_currentRect->setFlag(QGraphicsItem::ItemIsMovable, false);
+            m_currentRect->setStartPoint(boundingRect.topRight());
+            m_currentRect->setEndPoint(boundingRect.bottomLeft());
             return true;
         }
 
-        if (distance(rect->bottomRight(), event.scenePos()) <= kSelectionCircleRadius) {
-            m_currentRect = rect;
-            m_currentRect->setStartPoint(rect->topLeft());
-            m_currentRect->setEndPoint(rect->bottomRight());
+        if (distance(boundingRect.bottomRight(), event.scenePos()) <= kSelectionCircleRadius) {
+            m_currentRect = static_cast<Rectangle*>(rect);
+            m_currentRect->setFlag(QGraphicsItem::ItemIsMovable, false);
+            m_currentRect->setStartPoint(boundingRect.topLeft());
+            m_currentRect->setEndPoint(boundingRect.bottomRight());
             return true;
         }
-    }*/
+    }
 
     return false;
 }
 
-//bool PaintScene::trySelectRect(const QGraphicsSceneMouseEvent& event)
-//{
-//    /*bool isSelected = false;
-//    auto& rects = Model::instanse().picture().rects();
-//    for (auto& rect : rects) {
-//        if (isSelected = isInside(event.scenePos(), *rect)) {
-//            for (auto& otherRect : rects) {
-//                if (otherRect == rect) continue;
-//
-//                otherRect->deselect();
-//                emit rectDeselected(otherRect);
-//            }
-//
-//            rect->select();
-//
-//            update();
-//            emit rectSelected(rect);
-//
-//            return true;
-//        }
-//    }
-//
-//    return isSelected;*/
-//    return false;
-//}
-
 bool PaintScene::tryCreateLocalRect(const QGraphicsSceneMouseEvent& event)
 {
     std::string name = "New rect " + std::to_string(counter++);
-    //m_currentRect = std::make_shared<Rectangle>(name, items().size(), event.scenePos(), 0); // TODO: change type
     m_currentRect = new Rectangle(name, items().size(), event.scenePos(), 0); // TODO: change type
     m_currentRect->setFlag(QGraphicsItem::ItemIsSelectable, true);
+    //m_currentRect->setFlag(QGraphicsItem::ItemIsMovable, true);
 
     addItem(m_currentRect);
 
@@ -174,7 +176,52 @@ bool PaintScene::tryCreateLocalRect(const QGraphicsSceneMouseEvent& event)
 
     update();
 
+    emit rectAdded(m_currentRect);
+
     return true;
+}
+
+void PaintScene::loadData(const IDataObject& dataObject)
+{
+    // here we should call dataObject.data() to get data from dataObject
+    // It's temporary realization
+
+    fs::path path = dataObject.name();
+    QImage image(path.string().c_str());
+    auto imageScaled = image.scaled(QSize(2048, 2048), Qt::KeepAspectRatio);
+
+    QGraphicsPixmapItem* pixmap = new QGraphicsPixmapItem();
+    pixmap->setPixmap(QPixmap::fromImage(imageScaled));
+
+    addItem(pixmap);
+
+    update();
+}
+
+void PaintScene::on_rectSelected(size_t rectId)
+{
+    for (auto* item : items()) {
+        auto* rect = static_cast<Rectangle*>(item);
+
+        if (rect->number() == rectId) {
+            rect->select();
+            update();
+            break;
+        }
+    }
+}
+
+void PaintScene::on_rectDeselected(size_t rectId)
+{
+    for (auto* item : items()) {
+        auto* rect = static_cast<Rectangle*>(item);
+
+        if (rect->number() == rectId) {
+            rect->deselect();
+            update();
+            break;
+        }
+    }
 }
 
 void PaintScene::itemClicked()
@@ -182,20 +229,12 @@ void PaintScene::itemClicked()
     for (auto* item : items())
         static_cast<Rectangle*>(item)->deselect();
 
-    for (auto* item : selectedItems())
-        static_cast<Rectangle*>(item)->select();
+    for (auto* item : selectedItems()) {
+        auto* rect = static_cast<Rectangle*>(item);
+        rect->select();
+        emit rectSelected(rect);
+    }
 
     update();
 }
 
-void PaintScene::on_rectAdded(std::shared_ptr<Rectangle> rect)
-{
-    addItem(rect.get());
-
-    update();
-}
-
-void PaintScene::rectSelectionChanged()
-{
-    update();
-}
