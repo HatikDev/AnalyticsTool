@@ -137,6 +137,11 @@ public:
 		m_currentIndex = index;
 	}
 
+	size_t batchStart() const
+	{
+		return m_batchStart;
+	}
+
 	void next()
 	{
 		++m_currentIndex;

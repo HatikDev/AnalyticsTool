@@ -47,6 +47,8 @@ private:
 
     void updatePreviousNextButton();
 
+    void updateDatasetObjectsList();
+
 private slots:
     void on_actionLoadDataset_triggered();
 
@@ -66,7 +68,7 @@ private slots:
     void on_drawModeButton_clicked();
     void on_actionselect_triggered();
     void on_actiondraw_triggered();
-    //void on_actionBrowseModel_triggered();
+    void on_dataObjectList_clicked(QListWidgetItem* item);
 
     void listWidgetItemChanged(QListWidgetItem* item);
 };

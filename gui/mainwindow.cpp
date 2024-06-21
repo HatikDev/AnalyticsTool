@@ -39,6 +39,8 @@ MainWindow::MainWindow(QWidget* parent)
 
 	connect(m_paintScene, &PaintScene::rectRemove, this, &MainWindow::on_rectRemoved);
 
+	connect(ui->datasetObjectsList, &QListWidget::itemClicked, this, &MainWindow::on_dataObjectList_clicked);
+
 	m_paintScene->setSceneRect(QRect(QPoint(0, 0), ui->mainGraphicsView->viewport()->rect().size()));
 
 	ui->mainGraphicsView->setScene(m_paintScene);
@@ -78,6 +80,8 @@ void MainWindow::loadDataset(const fs::path& path)
 	m_paintScene->loadData(*m_dataset->data());
 
 	ui->mainGraphicsView->fitInView(m_paintScene->sceneRect(), Qt::IgnoreAspectRatio);
+
+	updateDatasetObjectsList();
 
 	updatePreviousNextButton();
 
@@ -177,6 +181,25 @@ void MainWindow::updatePreviousNextButton()
 
 	ui->prevButton->setEnabled(m_dataset->hasPrevious());
 	ui->nextButton->setEnabled(m_dataset->hasNext());
+}
+
+void MainWindow::updateDatasetObjectsList()
+{
+	if (!m_dataset)
+		return;
+
+	auto batch = m_dataset->batch();
+
+	QStringList objNames;
+	for (auto& obj : batch)
+		objNames << obj->data().imgPath.filename().string().c_str();
+
+
+	ui->datasetObjectsList->clear();
+	ui->datasetObjectsList->addItems(objNames);
+
+	auto selectedRow = m_dataset->currentIndex() % m_dataset->batchSize();
+	ui->datasetObjectsList->setCurrentRow(selectedRow);
 }
 
 void MainWindow::on_actionLoadDataset_triggered()
@@ -319,6 +342,8 @@ void MainWindow::on_prevButton_clicked()
 
 	ui->mainGraphicsView->fitInView(m_paintScene->sceneRect(), Qt::IgnoreAspectRatio);
 
+	updateDatasetObjectsList();
+
 	updatePreviousNextButton();
 }
 
@@ -332,6 +357,8 @@ void MainWindow::on_nextButton_clicked()
 	updateLabels();
 
 	ui->mainGraphicsView->fitInView(m_paintScene->sceneRect(), Qt::IgnoreAspectRatio);
+
+	updateDatasetObjectsList();
 
 	updatePreviousNextButton();
 }
@@ -378,6 +405,22 @@ void MainWindow::on_actiondraw_triggered()
 	ui->drawModeButton->setChecked(true);
 
 	m_paintScene->setMode(PaintMode::draw);
+}
+
+void MainWindow::on_dataObjectList_clicked(QListWidgetItem* item)
+{
+	auto index = ui->datasetObjectsList->row(item);
+	m_dataset->setIndex(m_dataset->batchStart() + index);
+
+	m_paintScene->reset();
+
+	m_paintScene->loadData(*m_dataset->data());
+
+	updateLabels();
+
+	ui->mainGraphicsView->fitInView(m_paintScene->sceneRect(), Qt::IgnoreAspectRatio);
+
+	updatePreviousNextButton();
 }
 
 //void MainWindow::on_actionLoadDataset_triggered()
