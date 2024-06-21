@@ -43,6 +43,7 @@ signals:
     void rectAdded(Rectangle* rect, bool knownType);
     void rectSelected(Rectangle* rect);
     void rectDeselected(Rectangle* rect);
+    void rectCategorySelected(Rectangle* rect);
     void rectRemove(Rectangle* rect); // TODO: add deleting rect
 
 private:
@@ -65,6 +66,8 @@ private:
     bool tryEditRect(const QGraphicsSceneMouseEvent& event);
 
     bool tryCreateLocalRect(const QGraphicsSceneMouseEvent& event);
+
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;
 
 public slots:
     // Calls when rect was added not from PaintScene.

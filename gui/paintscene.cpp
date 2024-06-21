@@ -182,6 +182,21 @@ bool PaintScene::tryCreateLocalRect(const QGraphicsSceneMouseEvent& event)
 	return true;
 }
 
+void PaintScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
+{
+	auto itemsList = items(event->scenePos());
+	if (itemsList.isEmpty())
+		return;
+
+	for (auto* item : itemsList) {
+		auto* rect = dynamic_cast<Rectangle*>(item);
+		if (!rect)
+			continue;
+
+		emit rectCategorySelected(rect);
+	}
+}
+
 void PaintScene::loadData(const IDataObject<BloodCellObj>& dataObject)
 {
 	// here we should call dataObject.data() to get data from dataObject

@@ -57,6 +57,7 @@ private slots:
     void on_rectAdded(Rectangle* rect, bool knownType);
     void on_paintSceneRectSelected(Rectangle* rect);
     void on_rectsListSelectionChanged(const QItemSelection& selected, const QItemSelection& delesected);
+    void on_rectDoubleClicked(Rectangle* rect);
     void on_rectsList_doubleClicked(const QModelIndex& index);
     void on_rectRemoved(Rectangle* rect);
 

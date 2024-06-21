@@ -37,6 +37,8 @@ MainWindow::MainWindow(QWidget* parent)
 
 	connect(m_paintScene, &PaintScene::rectSelected, this, &MainWindow::on_paintSceneRectSelected);
 
+	connect(m_paintScene, &PaintScene::rectCategorySelected, this, &MainWindow::on_rectDoubleClicked);
+
 	connect(m_paintScene, &PaintScene::rectRemove, this, &MainWindow::on_rectRemoved);
 
 	connect(ui->datasetObjectsList, &QListWidget::itemClicked, this, &MainWindow::on_dataObjectList_clicked);
@@ -284,6 +286,19 @@ void MainWindow::on_rectsListSelectionChanged(const QItemSelection& selected, co
 
 	size_t number = m_rectModel->data(selectedList.at(0), Qt::UserRole).toInt();
 	m_paintScene->on_rectSelected(number);
+}
+
+void MainWindow::on_rectDoubleClicked(Rectangle* rect)
+{
+	if (!m_dataset || m_paintScene->mode() != PaintMode::draw)
+		return;
+
+	try {
+		auto [cellType, name] = showSelectTypeDialog();
+		rect->setCellType(cellType);
+		rect->setName(name);
+	}
+	catch (AnalyticsException& e) {}
 }
 
 void MainWindow::on_rectsList_doubleClicked(const QModelIndex& index)
