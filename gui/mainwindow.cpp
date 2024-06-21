@@ -12,273 +12,418 @@
 #include <QColorDialog>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QInputDialog>
 
 namespace fs = std::filesystem;
 
 MainWindow::MainWindow(QWidget* parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-    , m_paintScene{ new PaintScene() }
-    , m_rectModel{ new RectModel() }
+	: QMainWindow(parent)
+	, ui(new Ui::MainWindow)
+	, m_paintScene{ new PaintScene() }
+	, m_rectModel{ new RectModel() }
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 
-    ui->rectsListView->setModel(m_rectModel);
+	ui->rectsListView->setModel(m_rectModel);
 
-    connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
+	connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
 
-    connect(m_paintScene, &PaintScene::rectSelected, this, &MainWindow::on_paintSceneRectSelected);
+	connect(m_paintScene, &PaintScene::rectSelected, this, &MainWindow::on_paintSceneRectSelected);
 
-    auto* rectSelectionModel = ui->rectsListView->selectionModel();
-    connect(rectSelectionModel, &QItemSelectionModel::selectionChanged, this, &MainWindow::on_rectsListSelectionChanged);
+	auto* rectSelectionModel = ui->rectsListView->selectionModel();
+	connect(rectSelectionModel, &QItemSelectionModel::selectionChanged, this, &MainWindow::on_rectsListSelectionChanged);
 
-    connect(m_paintScene, &PaintScene::rectSelected, this, &MainWindow::on_paintSceneRectSelected);
+	connect(ui->rectsListView, &QListView::doubleClicked, this, &MainWindow::on_rectsList_doubleClicked);
 
-    connect(m_paintScene, &PaintScene::rectRemove, this, &MainWindow::on_rectRemoved);
+	connect(m_paintScene, &PaintScene::rectSelected, this, &MainWindow::on_paintSceneRectSelected);
 
-    ui->mainGraphicsView->setScene(m_paintScene);
+	connect(m_paintScene, &PaintScene::rectRemove, this, &MainWindow::on_rectRemoved);
 
-    //ui->mainGraphicsView->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+	m_paintScene->setSceneRect(QRect(QPoint(0, 0), ui->mainGraphicsView->viewport()->rect().size()));
 
-    //ui->rectsListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    //connect(ui->rectsListWidget, &QListWidget::itemChanged, this, &MainWindow::listWidgetItemChanged);
-    //connect(ui->rectsListWidget, &QListWidget::customContextMenuRequested,
-    //    this, &MainWindow::provideContextMenu);
+	ui->mainGraphicsView->setScene(m_paintScene);
 
-    //// connect for rects loading from dataset
-    //connect(&Model::instanse().picture(), &Picture::rectAdded, m_paintScene, &PaintScene::on_rectAdded);
-    //connect(&Model::instanse().picture(), &Picture::rectAdded, this, &MainWindow::on_rectAdded);
+	//int width = 360;
+	//int height = 360;
+	//ui->mainGraphicsView->setFixedSize(width, height);
+	//ui->mainGraphicsView->setSceneRect(0, 0, width, height);
+	//ui->mainGraphicsView->fitInView(0, 0, width, height, Qt::KeepAspectRatio);
 
-    //// connects for rects drawn by mouse
-    //connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
+	//ui->mainGraphicsView->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+
+	//ui->rectsListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+	//connect(ui->rectsListView, &QListView::select, this, &MainWindow::listWidgetItemChanged);
+	//connect(ui->rectsListWidget, &QListWidget::customContextMenuRequested,
+	//    this, &MainWindow::provideContextMenu);
+
+	//// connect for rects loading from dataset
+	//connect(&Model::instanse().picture(), &Picture::rectAdded, m_paintScene, &PaintScene::on_rectAdded);
+	//connect(&Model::instanse().picture(), &Picture::rectAdded, this, &MainWindow::on_rectAdded);
+
+	//// connects for rects drawn by mouse
+	//connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+	delete ui;
 }
 
 void MainWindow::loadDataset(const fs::path& path)
 {
-    m_dataset.reset(new Dataset(path));
+	m_dataset.reset(new BloodDataset(path));
 
-    m_paintScene->loadData(*m_dataset->data());
-    /*m_paintScene->reset();
+	updateLabels();
 
-    try {
-        m_controller.loadDataset(path);
-    }
-    catch (const AnalyticsException& e) {
-        QMessageBox::critical(
-            this,
-            tr("Analytics Tool"),
-            tr("Dataset has invalid format"));
+	m_paintScene->loadData(*m_dataset->data());
 
-        return;
-    }
+	ui->mainGraphicsView->fitInView(m_paintScene->sceneRect(), Qt::IgnoreAspectRatio);
 
-    loadImage(Model::instanse().dataset().current());
+	updatePreviousNextButton();
 
-    updateLabels();*/
+	/*m_paintScene->reset();
+
+	try {
+		m_controller.loadDataset(path);
+	}
+	catch (const AnalyticsException& e) {
+		QMessageBox::critical(
+			this,
+			tr("Analytics Tool"),
+			tr("Dataset has invalid format"));
+
+		return;
+	}
+
+	loadImage(Model::instanse().dataset().current());
+
+	updateLabels();*/
 }
 
 void MainWindow::updateLabels()
 {
-    /*size_t currentIndex = Model::instanse().dataset().currentIndex();
-    size_t objectsCount = Model::instanse().dataset().count();
-    ui->counterLabel->setText(QString("%1/%2").arg(currentIndex + 1).arg(objectsCount));
+	size_t currentIndex = m_dataset->currentIndex();
+	size_t objectsCount = m_dataset->size();
+	ui->counterLabel->setText(QString("%1/%2").arg(currentIndex + 1).arg(objectsCount));
 
-    ui->pictureName->setText(Model::instanse().dataset().currentName().c_str());*/
+	auto objName = m_dataset->data()->data().imgPath.filename().string();
+	ui->pictureName->setText(objName.c_str());
 }
 
 void MainWindow::loadImage(Picture picture)
 {
-    /*picture.scale(ui->mainGraphicsView->size());
-    Model::instanse().setPicture(std::move(picture));*/
+	/*picture.scale(ui->mainGraphicsView->size());
+	Model::instanse().setPicture(std::move(picture));*/
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* keyEvent)
 {
-    switch (keyEvent->key()) {
-    case Qt::Key_Delete:
-    case Qt::Key_Backspace:
-        auto selected = ui->rectsListView->selectionModel()->selection().indexes();
-        if (selected.size() == 0)
-            return;
+	if (m_paintScene->mode() != PaintMode::draw)
+		return;
 
-        int id = m_rectModel->data(selected.at(0), Qt::UserRole).toInt();
+	switch (keyEvent->key()) {
+	case Qt::Key_Delete:
+	case Qt::Key_Backspace:
+		auto selected = ui->rectsListView->selectionModel()->selection().indexes();
+		if (selected.size() == 0)
+			return;
 
-        for (auto* item : m_paintScene->items()) {
-            auto* rect = static_cast<Rectangle*>(item);
-            if (rect && rect->number() == id) {
-                m_rectModel->deleteRect(rect);
-                m_paintScene->removeItem(item);
-                break;
-            }
-        }
-        break;
-    }
+		int id = m_rectModel->data(selected.at(0), Qt::UserRole).toInt();
+
+		for (auto* item : m_paintScene->items()) {
+			auto* rect = dynamic_cast<Rectangle*>(item);
+			if (rect && rect->number() == id) {
+				m_rectModel->deleteRect(rect);
+				m_paintScene->removeItem(item);
+				break;
+			}
+		}
+		break;
+	}
+}
+
+std::pair<size_t, std::string> MainWindow::showSelectTypeDialog()
+{
+	QInputDialog qDialog;
+
+	QStringList items;
+	for (auto& cl : m_dataset->classes())
+		items << cl.second.c_str();
+
+	qDialog.setOptions(QInputDialog::UseListViewForComboBoxItems);
+	qDialog.setComboBoxItems(items);
+	qDialog.setWindowTitle("Choose cell type");
+
+	if (!qDialog.exec())
+		throw AnalyticsException("Failed to show dialog");
+
+	auto value = qDialog.textValue().toStdString();
+	auto classes = m_dataset->classes();
+	auto it = std::find_if(classes.begin(), classes.end(), [&value](const auto& pair) { return pair.second == value; });
+	if (it == classes.end())
+		throw AnalyticsException("Action has been cancelled by user");
+
+	return *it;
+}
+
+void MainWindow::updatePreviousNextButton()
+{
+	if (!m_dataset)
+	{
+		ui->prevButton->setEnabled(false);
+		ui->nextButton->setEnabled(false);
+		return;
+	}
+
+	ui->prevButton->setEnabled(m_dataset->hasPrevious());
+	ui->nextButton->setEnabled(m_dataset->hasNext());
 }
 
 void MainWindow::on_actionLoadDataset_triggered()
 {
-    QString datasetPath = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-        ".",
-        QFileDialog::ShowDirsOnly
-        | QFileDialog::DontResolveSymlinks);
+	QString datasetPath = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+		".",
+		QFileDialog::ShowDirsOnly
+		| QFileDialog::DontResolveSymlinks);
 
-    if (datasetPath.isEmpty())
-        return;
+	if (datasetPath.isEmpty())
+		return;
 
-    loadDataset(datasetPath.toStdString());
+	try {
+		loadDataset(datasetPath.toStdString());
+	}
+	catch (const AnalyticsException& exception)
+	{
+		QMessageBox::critical(this, tr("Analytics tool v2"),
+			tr("Dataset has invalid format"),
+			QMessageBox::Ok,
+			QMessageBox::Ok);
+	}
 }
 
 void MainWindow::on_rectsListWidget_itemClicked(QListWidgetItem* item)
 {
-    /*auto elementName = item->text();
+	/*auto elementName = item->text();
 
-    try {
-        auto& rects = Model::instanse().picture().rects();
-        for (auto& obj : rects)
-            obj->deselect();
+	try {
+		auto& rects = Model::instanse().picture().rects();
+		for (auto& obj : rects)
+			obj->deselect();
 
-        auto rect = Model::instanse().picture().rectByNumber(ui->rectsListWidget->row(item));
-        rect->select();
+		auto rect = Model::instanse().picture().rectByNumber(ui->rectsListWidget->row(item));
+		rect->select();
 
-        m_paintScene->update();
-    }
-    catch (...) {
-        QMessageBox::critical(this, tr("Analytics tool v2"),
-            tr("Failed to find rectangle"),
-            QMessageBox::Ok,
-            QMessageBox::Ok);
-    }*/
+		m_paintScene->update();
+	}
+	catch (...) {
+		QMessageBox::critical(this, tr("Analytics tool v2"),
+			tr("Failed to find rectangle"),
+			QMessageBox::Ok,
+			QMessageBox::Ok);
+	}*/
 }
 
-void MainWindow::on_rectAdded(Rectangle* rect)
+void MainWindow::on_rectAdded(Rectangle* rect, bool knownType)
 {
-    m_rectModel->addRect(rect);
+	m_rectModel->addRect(rect);
+
+	if (knownType || !m_dataset || m_paintScene->mode() != PaintMode::draw)
+		return;
+
+	try {
+		auto [cellType, name] = showSelectTypeDialog();
+		rect->setCellType(cellType);
+		rect->setName(name);
+	}
+	catch (AnalyticsException& e) {}
 }
 
 void MainWindow::on_paintSceneRectSelected(Rectangle* rect)
 {
-    int row = m_rectModel->rowByRect(rect);
-    QItemSelection selected(m_rectModel->index(row), m_rectModel->index(row));
+	int row = m_rectModel->rowByRect(rect);
+	QItemSelection selected(m_rectModel->index(row), m_rectModel->index(row));
 
-    auto* model = ui->rectsListView->selectionModel();
-    model->select(selected, QItemSelectionModel::ClearAndSelect);
+	auto* model = ui->rectsListView->selectionModel();
+	model->select(selected, QItemSelectionModel::ClearAndSelect);
 }
 
 void MainWindow::on_rectsListSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
-    auto deselectedList = deselected.indexes();
-    for (auto& item : deselectedList) {
-        size_t number = m_rectModel->data(item, Qt::UserRole).toInt();
-        m_paintScene->on_rectDeselected(number);
-    }
+	auto deselectedList = deselected.indexes();
+	for (auto& item : deselectedList) {
+		size_t number = m_rectModel->data(item, Qt::UserRole).toInt();
+		m_paintScene->on_rectDeselected(number);
+	}
 
-    auto selectedList = selected.indexes();
-    if (selectedList.size() == 0)
-        return;
+	auto selectedList = selected.indexes();
+	if (selectedList.size() == 0)
+		return;
 
-    size_t number = m_rectModel->data(selectedList.at(0), Qt::UserRole).toInt();
-    m_paintScene->on_rectSelected(number);
+	size_t number = m_rectModel->data(selectedList.at(0), Qt::UserRole).toInt();
+	m_paintScene->on_rectSelected(number);
+}
+
+void MainWindow::on_rectsList_doubleClicked(const QModelIndex& index)
+{
+	if (!m_dataset || m_paintScene->mode() != PaintMode::draw)
+		return;
+
+	try {
+		auto [cellType, name] = showSelectTypeDialog();
+
+		auto id = m_rectModel->data(index, Qt::UserRole).toInt();
+		for (auto* item : m_paintScene->items()) {
+			auto* rect = dynamic_cast<Rectangle*>(item);
+			if (rect && rect->number() == id) {
+				rect->setCellType(cellType);
+				rect->setName(name);
+				break;
+			}
+		}
+	}
+	catch (AnalyticsException& e) {}
 }
 
 void MainWindow::on_rectRemoved(Rectangle* rect)
 {
-    // TODO: add handles of removing rects
-    m_rectModel->deleteRect(rect);
-    delete rect;
+	// TODO: add handles of removing rects
+	m_rectModel->deleteRect(rect);
+	delete rect;
 }
 
 void MainWindow::provideContextMenu(const QPoint& pos)
 {
-    //QPoint item = ui->rectsListWidget->mapToGlobal(pos);
-    //QMenu submenu;
-    //submenu.addAction("edit");
-    //submenu.addAction("delete");
-    //QAction* rightClickItem = submenu.exec(item); // TODO: should we free memory?
-    //if (rightClickItem) {
-    //    if (rightClickItem->text().contains("edit")) {
+	//QPoint item = ui->rectsListWidget->mapToGlobal(pos);
+	//QMenu submenu;
+	//submenu.addAction("edit");
+	//submenu.addAction("delete");
+	//QAction* rightClickItem = submenu.exec(item); // TODO: should we free memory?
+	//if (rightClickItem) {
+	//    if (rightClickItem->text().contains("edit")) {
 
-    //    }
-    //    else if (rightClickItem->text().contains("delete")) {
+	//    }
+	//    else if (rightClickItem->text().contains("delete")) {
 
-    //    }
-    //}
+	//    }
+	//}
 }
 
 void MainWindow::on_prevButton_clicked()
 {
-    /*ui->rectsListWidget->clear();
+	m_paintScene->reset();
 
-    m_paintScene->reset();
+	m_dataset->previous();
+	m_paintScene->loadData(*m_dataset->data());
 
-    loadImage(Model::instanse().dataset().previous());
+	updateLabels();
 
-    ui->nextButton->setEnabled(true);
+	ui->mainGraphicsView->fitInView(m_paintScene->sceneRect(), Qt::IgnoreAspectRatio);
 
-    updateLabels();*/
+	updatePreviousNextButton();
 }
 
 void MainWindow::on_nextButton_clicked()
 {
-    /*ui->rectsListWidget->clear();
+	m_paintScene->reset();
 
-    m_paintScene->reset();
+	m_dataset->next();
+	m_paintScene->loadData(*m_dataset->data());
 
-    loadImage(Model::instanse().dataset().next());
+	updateLabels();
 
-    ui->prevButton->setEnabled(true);
+	ui->mainGraphicsView->fitInView(m_paintScene->sceneRect(), Qt::IgnoreAspectRatio);
 
-    updateLabels();*/
+	updatePreviousNextButton();
 }
 
-void MainWindow::on_actionBrowseModel_triggered()
+void MainWindow::on_selectModeButton_clicked()
 {
-    //QString fileName = QFileDialog::getOpenFileName(this,
-    //                                         tr("Open onnx model"), ".", tr("All files (*.*)"));
-    //if (fileName.isEmpty())
-    //    return;
+	ui->actionselect->setChecked(true);
+	ui->actiondraw->setChecked(false);
 
-    //std::filesystem::path file = fileName.toStdString();
-    //if (file.extension() != ".onnx") {
-    //    QMessageBox::critical(
-    //        this,
-    //        tr("Analytics Tool"),
-    //        tr("Selected file is not onnx model"));
-    //    return;
-    //}
+	ui->selectModeButton->setChecked(true);
+	ui->drawModeButton->setChecked(false);
 
-    //if (Model::instanse().dataset().count() == 0) {
-    //    QMessageBox::critical(
-    //        this,
-    //        tr("Analytics Tool"),
-    //        tr("Dataset is not loaded"));
-    //    return;
-    //}
-
-    //std::string datasetPath = Model::instanse().dataset().path();
-    //loader::loadModel(fileName.toStdString().c_str(), datasetPath.data());
-
-    //for (size_t i = 0; i < Model::instanse().dataset().count(); ++i) {
-    //    QString resultPath = QString("%1/images_results/%2.txt").arg(Model::instanse().dataset().path().c_str())
-    //                                    .arg(Model::instanse().dataset().currentName().c_str());
-    //    QString imagePath = QString("%1/images/%2.jpg").arg(Model::instanse().dataset().path().c_str())
-    //                                    .arg(Model::instanse().dataset().currentName().c_str());
-    //    loader::predict(imagePath.toStdString().c_str(), resultPath.toStdString().c_str());
-
-    //    Model::instanse().dataset().next(); // TODO: refactor this
-    //}
+	m_paintScene->setMode(PaintMode::select);
 }
+
+void MainWindow::on_drawModeButton_clicked()
+{
+	ui->actionselect->setChecked(false);
+	ui->actiondraw->setChecked(true);
+
+	ui->selectModeButton->setChecked(false);
+	ui->drawModeButton->setChecked(true);
+
+	m_paintScene->setMode(PaintMode::draw);
+}
+
+void MainWindow::on_actionselect_triggered()
+{
+	ui->actionselect->setChecked(true);
+	ui->actiondraw->setChecked(false);
+
+	ui->selectModeButton->setChecked(true);
+	ui->drawModeButton->setChecked(false);
+
+	m_paintScene->setMode(PaintMode::select);
+}
+
+void MainWindow::on_actiondraw_triggered()
+{
+	ui->actionselect->setChecked(false);
+	ui->actiondraw->setChecked(true);
+
+	ui->selectModeButton->setChecked(false);
+	ui->drawModeButton->setChecked(true);
+
+	m_paintScene->setMode(PaintMode::draw);
+}
+
+//void MainWindow::on_actionLoadDataset_triggered()
+//{
+	//QString fileName = QFileDialog::getOpenFileName(this,
+	//                                         tr("Open onnx model"), ".", tr("All files (*.*)"));
+	//if (fileName.isEmpty())
+	//    return;
+
+	//std::filesystem::path file = fileName.toStdString();
+	//if (file.extension() != ".onnx") {
+	//    QMessageBox::critical(
+	//        this,
+	//        tr("Analytics Tool"),
+	//        tr("Selected file is not onnx model"));
+	//    return;
+	//}
+
+	//if (Model::instanse().dataset().count() == 0) {
+	//    QMessageBox::critical(
+	//        this,
+	//        tr("Analytics Tool"),
+	//        tr("Dataset is not loaded"));
+	//    return;
+	//}
+
+	//std::string datasetPath = Model::instanse().dataset().path();
+	//loader::loadModel(fileName.toStdString().c_str(), datasetPath.data());
+
+	//for (size_t i = 0; i < Model::instanse().dataset().count(); ++i) {
+	//    QString resultPath = QString("%1/images_results/%2.txt").arg(Model::instanse().dataset().path().c_str())
+	//                                    .arg(Model::instanse().dataset().currentName().c_str());
+	//    QString imagePath = QString("%1/images/%2.jpg").arg(Model::instanse().dataset().path().c_str())
+	//                                    .arg(Model::instanse().dataset().currentName().c_str());
+	//    loader::predict(imagePath.toStdString().c_str(), resultPath.toStdString().c_str());
+
+	//    Model::instanse().dataset().next(); // TODO: refactor this
+	//}
+//}
 
 void MainWindow::listWidgetItemChanged(QListWidgetItem* item)
 {
-    /*int index = ui->rectsListWidget->row(item);
+	/*int index = ui->rectsListWidget->row(item);
 
-    if (item->checkState() == Qt::Checked)
-        Model::instanse().picture().rectByNumber(index)->show();
-    else
-        Model::instanse().picture().rectByNumber(index)->hide();*/
+	if (item->checkState() == Qt::Checked)
+		Model::instanse().picture().rectByNumber(index)->show();
+	else
+		Model::instanse().picture().rectByNumber(index)->hide();*/
 }

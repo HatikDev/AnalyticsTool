@@ -147,7 +147,7 @@ namespace fs = std::filesystem;
 //        throw AnalyticsException("Image directory is not exist");
 //}
 
-Dataset::Dataset(std::filesystem::path datasetPath, size_t batchSize)
+/*Dataset::Dataset(std::filesystem::path datasetPath, size_t batchSize)
 	: kBatchSize{ batchSize }, kDatasetPath{ datasetPath }
 {
     checkDatasetFormatCorrectness();
@@ -288,4 +288,4 @@ void BloodCellDataObjectV1::data() const
 std::string BloodCellDataObjectV1::name() const
 {
     return std::string();
-}
+}*/

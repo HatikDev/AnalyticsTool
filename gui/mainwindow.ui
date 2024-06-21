@@ -16,9 +16,67 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="3,0">
     <item>
-     <layout class="QVBoxLayout" name="paintLayout" stretch="0">
+     <layout class="QVBoxLayout" name="paintLayout" stretch="0,0">
       <item>
        <widget class="QGraphicsView" name="mainGraphicsView"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="toolsLayout">
+        <item>
+         <widget class="QPushButton" name="selectModeButton">
+          <property name="focusPolicy">
+           <enum>Qt::StrongFocus</enum>
+          </property>
+          <property name="text">
+           <string>select</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="drawModeButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>draw</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="autoDefault">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
@@ -32,6 +90,9 @@
       </item>
       <item>
        <layout class="QVBoxLayout" name="controlLayout">
+        <item>
+         <widget class="QListWidget" name="datasetObjectsList"/>
+        </item>
         <item>
          <widget class="QLabel" name="counterLabel">
           <property name="layoutDirection">
@@ -69,6 +130,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="nextButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>&gt;</string>
             </property>
@@ -103,8 +167,16 @@
     </property>
     <addaction name="actionBrowseModel"/>
    </widget>
+   <widget class="QMenu" name="menuModes">
+    <property name="title">
+     <string>Modes</string>
+    </property>
+    <addaction name="actionselect"/>
+    <addaction name="actiondraw"/>
+   </widget>
    <addaction name="menuDataset"/>
    <addaction name="menuLaunch"/>
+   <addaction name="menuModes"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLoadDataset">
@@ -115,6 +187,25 @@
   <action name="actionBrowseModel">
    <property name="text">
     <string>Browse model</string>
+   </property>
+  </action>
+  <action name="actionselect">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>select</string>
+   </property>
+  </action>
+  <action name="actiondraw">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>draw</string>
    </property>
   </action>
  </widget>

@@ -18,6 +18,11 @@ enum class MouseState {
     selecting,
 };
 
+enum class PaintMode {
+    select = 0,
+    draw,
+};
+
 class PaintScene : public QGraphicsScene
 {
     Q_OBJECT
@@ -28,10 +33,14 @@ public:
 
     void reset();
 
-    void loadData(const IDataObject& dataObject);
+    void loadData(const IDataObject<BloodCellObj>& dataObject);
+
+    void setMode(PaintMode mode);
+
+    PaintMode mode() const;
 
 signals:
-    void rectAdded(Rectangle* rect);
+    void rectAdded(Rectangle* rect, bool knownType);
     void rectSelected(Rectangle* rect);
     void rectDeselected(Rectangle* rect);
     void rectRemove(Rectangle* rect); // TODO: add deleting rect
@@ -42,6 +51,8 @@ private:
     static size_t counter;
 
     MouseState m_mouseState = MouseState::released;
+
+    PaintMode m_paintMode = PaintMode::select;
 
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 

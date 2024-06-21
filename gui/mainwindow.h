@@ -35,7 +35,7 @@ private:
 
     RectModel* m_rectModel;
 
-    std::shared_ptr<Dataset> m_dataset;
+    std::shared_ptr<BloodDataset> m_dataset;
 
     void updateLabels();
 
@@ -43,21 +43,30 @@ private:
 
     void keyPressEvent(QKeyEvent* keyEvent) override;
 
+    std::pair<size_t, std::string> showSelectTypeDialog();
+
+    void updatePreviousNextButton();
+
 private slots:
     void on_actionLoadDataset_triggered();
 
     void on_rectsListWidget_itemClicked(QListWidgetItem *item);
 
-    void on_rectAdded(Rectangle* rect);
+    void on_rectAdded(Rectangle* rect, bool knownType);
     void on_paintSceneRectSelected(Rectangle* rect);
     void on_rectsListSelectionChanged(const QItemSelection& selected, const QItemSelection& delesected);
+    void on_rectsList_doubleClicked(const QModelIndex& index);
     void on_rectRemoved(Rectangle* rect);
 
     void provideContextMenu(const QPoint& pos);
 
     void on_prevButton_clicked();
     void on_nextButton_clicked();
-    void on_actionBrowseModel_triggered();
+    void on_selectModeButton_clicked();
+    void on_drawModeButton_clicked();
+    void on_actionselect_triggered();
+    void on_actiondraw_triggered();
+    //void on_actionBrowseModel_triggered();
 
     void listWidgetItemChanged(QListWidgetItem* item);
 };
