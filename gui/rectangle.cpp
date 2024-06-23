@@ -109,16 +109,6 @@ size_t Rectangle::number() const
     return m_number;
 }
 
-void Rectangle::show()
-{
-    m_isVisible = true;
-}
-
-void Rectangle::hide()
-{
-    m_isVisible = false;
-}
-
 void Rectangle::updateRomb()
 {
     update((m_endPoint.x() > m_startPoint.x() ? m_startPoint.x() : m_endPoint.x()) - 5,
@@ -137,9 +127,6 @@ QRectF Rectangle::boundingRect() const
 
 void Rectangle::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-    if (!m_isVisible)
-        return;
-
     QPen pen;
     if (m_isSelected) {
         pen = QPen(utils::colorByClass(m_cellType), kLineWidth,

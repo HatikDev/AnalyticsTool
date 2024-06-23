@@ -41,9 +41,9 @@ bool RectModel::setData(const QModelIndex& index, const QVariant& value, int rol
 
     auto rectId = data(index, Qt::UserRole).toInt();
     if (value == Qt::Checked)
-        m_rects[rectId]->show();
+        m_rects[rectId]->setVisible(true);
     else if (value == Qt::Unchecked)
-        m_rects[rectId]->hide();
+        m_rects[rectId]->setVisible(false);
 
     emit dataChanged(index, index);
 

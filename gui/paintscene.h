@@ -33,7 +33,9 @@ public:
 
     void reset();
 
-    void loadData(const IDataObject<BloodCellObj>& dataObject);
+    void loadData(IDataObject<BloodCellObj>& dataObject);
+
+    BloodCellObj getData() const;
 
     void setMode(PaintMode mode);
 

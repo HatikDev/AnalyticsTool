@@ -49,6 +49,8 @@ private:
 
     void updateDatasetObjectsList();
 
+    void saveCurrent();
+
 private slots:
     void on_actionLoadDataset_triggered();
 

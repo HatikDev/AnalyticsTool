@@ -197,14 +197,13 @@ void PaintScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
 	}
 }
 
-void PaintScene::loadData(const IDataObject<BloodCellObj>& dataObject)
+void PaintScene::loadData(IDataObject<BloodCellObj>& dataObject)
 {
 	// here we should call dataObject.data() to get data from dataObject
 	// It's temporary realization
 
 	// load image
-
-	BloodCellObj obj = dataObject.data();
+	auto& obj = dataObject.data();
 
 	fs::path path = obj.imgPath;
 	QImage image(path.string().c_str());
@@ -236,6 +235,30 @@ void PaintScene::loadData(const IDataObject<BloodCellObj>& dataObject)
 	}
 
 	update();
+}
+
+BloodCellObj PaintScene::getData() const
+{
+	BloodCellObj obj;
+	obj.rects.reserve(items().length());
+
+	auto sceneWidth = 480; // TODO: replace constant
+	auto sceneHeight = 480; // TODO: replace constant
+
+	for (auto* item : items())
+	{
+		auto* rect = dynamic_cast<Rectangle*>(item);
+		if (!rect) // now we just skip image path
+			continue;
+
+		float centerX = (rect->topLeft().x() + rect->topRight().x()) / 2. / sceneWidth;
+		float centerY = (rect->topLeft().y() + rect->bottomLeft().y()) / 2. / sceneHeight;
+		float width = (rect->topRight().x() - rect->topLeft().x()) * 1. / sceneWidth;
+		float height = (rect->bottomLeft().y() - rect->topLeft().y()) * 1. / sceneHeight;
+		obj.rects.emplace_back(static_cast<size_t>(rect->cellType()), rect->name(), centerX, centerY, width, height);
+	}
+
+	return obj;
 }
 
 void PaintScene::setMode(PaintMode mode)

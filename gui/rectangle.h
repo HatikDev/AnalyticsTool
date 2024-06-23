@@ -45,10 +45,6 @@ public:
 
     size_t number() const;
 
-    void show();
-
-    void hide();
-
 public slots:
     void updateRomb();
 
@@ -64,7 +60,7 @@ protected:
 
     bool m_isSelected = false;
 
-    bool m_isVisible = true;
+    //bool m_isVisible = true;
 
     size_t m_cellType;
 

@@ -1,7 +1,7 @@
 #ifndef DATASET_H
 #define DATASET_H
 
-//#include "picture.h"
+#include "gui/rectangle.h"
 #include "analyticsexception.h"
 
 #include <filesystem>
@@ -32,7 +32,7 @@ public:
 		: m_name{ name }, m_obj{ obj } {}
 	virtual ~IDataObject() {}
 
-	virtual T data() const {
+	virtual T& data() {
 		return m_obj;
 	}
 
@@ -129,7 +129,7 @@ public:
 
 	std::shared_ptr<IDataObject<ObjType>> data()
 	{
-		return m_batch.at(m_currentIndex);
+		return m_batch.at(m_currentIndex % kBatchSize);
 	}
 
 	void setIndex(size_t index)
@@ -142,13 +142,31 @@ public:
 		return m_batchStart;
 	}
 
-	void next()
+	void next(bool save = true)
 	{
+		if (m_currentIndex + 1 >= size())
+			throw AnalyticsException("Invalid index");
+
+		if (m_currentIndex + 1 >= m_batchStart + kBatchSize)
+		{
+			load(m_batchStart + kBatchSize);
+			m_batchStart += kBatchSize;
+		}
+
 		++m_currentIndex;
 	}
 
-	void previous()
+	void previous(bool save = true)
 	{
+		if (m_currentIndex == 0)
+			throw AnalyticsException("Invalid index");
+
+		if (m_currentIndex - 1 < m_batchStart)
+		{
+			load(m_batchStart - kBatchSize);
+			m_batchStart -= kBatchSize;
+		}
+
 		--m_currentIndex;
 	}
 
@@ -162,9 +180,12 @@ public:
 		return size() > 0 && m_currentIndex + 1 <= size() - 1;
 	}
 
-	size_t size() const {
+	size_t size() const
+	{
 		return m_names.size();
 	}
+
+	virtual void saveCurrent(const ObjType& objs) = 0;
 
 protected:
 	const size_t kBatchSize;
@@ -205,6 +226,25 @@ public:
 		load(0);
 	}
 	~BloodDataset() override {}
+
+	void saveCurrent(const BloodCellObj& obj) override
+	{
+		// TODO: add exception safety
+		auto resultPath = kDatasetPath / "images_labels" / m_batch[m_currentIndex % kBatchSize]->data().imgPath.filename();
+		resultPath.replace_extension(".txt");
+
+		std::ofstream file(resultPath);
+		if (!file.is_open())
+			throw AnalyticsException("Failed to open file " + resultPath.string() + " to disk");
+
+		for (auto& rect : obj.rects)
+			file << rect.type << " " << rect.centerX << " " << rect.centerY << " " << rect.w << " " << rect.h << std::endl;
+
+		file.close();
+
+		auto& cachedObj = m_batch.at(m_currentIndex % kBatchSize).get()->data();
+		cachedObj.rects = obj.rects;
+	}
 
 private:
 	void load(size_t startIndex) override
@@ -276,7 +316,6 @@ private:
 		float width, height;
 		float centerX, centerY;
 
-		//auto& classes = m_classes; // Model::instanse().dataset().classes();
 		size_t counter = 0;
 		while (getline(file, line)) {
 			std::stringstream ss;
@@ -285,23 +324,9 @@ private:
 
 			type -= '0';
 
-			// TODO: we need to multiply coordinates on image size
-			//float x0 = centerX - width / 2;
-			//float y0 = centerY - height / 2;
-			//float x1 = x0 + width;
-			//float y1 = y0 + height;
-
 			// TODO: change type by predefined class
 			auto name = m_classes.find(type)->second;
-			//std::string className = classNameIt == classes.end() ? std::to_string(type) : classNameIt->second;
 			rects.push_back({ type, name, centerX, centerY, width, height });
-			//m_rects.push_back(std::make_shared<Rectangle>(className, counter++, QPointF(x0, y0), type));
-			//m_rects.back()->setEndPoint(QPointF(x1, y1));
-
-			//connect(m_rects.get(), &Rectangle::rectSelected, this, &PaintScene::rectSelectionChanged);
-			//connect(m_rects.get(), &Rectangle::rectDeselected, this, &PaintScene::rectSelectionChanged);
-			// TODO: add disconnection
-			//emit rectAdded(m_rects.back());
 		}
 
 		return rects;

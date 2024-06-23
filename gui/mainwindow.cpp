@@ -204,6 +204,15 @@ void MainWindow::updateDatasetObjectsList()
 	ui->datasetObjectsList->setCurrentRow(selectedRow);
 }
 
+void MainWindow::saveCurrent()
+{
+	for (auto* item : m_paintScene->items())
+	{
+		auto* rect = dynamic_cast<Rectangle*>(item);
+
+	}
+}
+
 void MainWindow::on_actionLoadDataset_triggered()
 {
 	QString datasetPath = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
@@ -348,9 +357,12 @@ void MainWindow::provideContextMenu(const QPoint& pos)
 
 void MainWindow::on_prevButton_clicked()
 {
-	m_paintScene->reset();
+	m_dataset->saveCurrent(m_paintScene->getData());
 
 	m_dataset->previous();
+
+	m_paintScene->reset();
+
 	m_paintScene->loadData(*m_dataset->data());
 
 	updateLabels();
@@ -364,9 +376,12 @@ void MainWindow::on_prevButton_clicked()
 
 void MainWindow::on_nextButton_clicked()
 {
-	m_paintScene->reset();
+	m_dataset->saveCurrent(m_paintScene->getData());
 
 	m_dataset->next();
+
+	m_paintScene->reset();
+
 	m_paintScene->loadData(*m_dataset->data());
 
 	updateLabels();
