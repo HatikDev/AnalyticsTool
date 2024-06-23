@@ -4,6 +4,7 @@
 #include "gui/rectangle.h"
 #include "analyticsexception.h"
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -254,7 +255,7 @@ private:
 		// add checks
 
 		auto start = m_names.begin() + startIndex;
-		auto end = start + kBatchSize;
+		auto end = start + std::min<size_t>(kBatchSize, std::distance(start, m_names.end()));
 
 		std::vector<std::shared_ptr<IDataObject<BloodCellObj>>> temp;
 		temp.reserve(kBatchSize);

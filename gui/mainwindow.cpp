@@ -75,13 +75,16 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadDataset(const fs::path& path)
 {
+	if (m_dataset)
+		m_dataset->saveCurrent(m_paintScene->getData());
+
 	m_dataset.reset(new BloodDataset(path));
 
 	updateLabels();
 
 	m_paintScene->loadData(*m_dataset->data());
 
-	ui->mainGraphicsView->fitInView(m_paintScene->sceneRect(), Qt::IgnoreAspectRatio);
+	ui->mainGraphicsView->fitInView(m_paintScene->sceneRect(), Qt::KeepAspectRatio);
 
 	updateDatasetObjectsList();
 
@@ -367,7 +370,7 @@ void MainWindow::on_prevButton_clicked()
 
 	updateLabels();
 
-	ui->mainGraphicsView->fitInView(m_paintScene->sceneRect(), Qt::IgnoreAspectRatio);
+	ui->mainGraphicsView->fitInView(m_paintScene->sceneRect(), Qt::KeepAspectRatio);
 
 	updateDatasetObjectsList();
 
@@ -386,7 +389,7 @@ void MainWindow::on_nextButton_clicked()
 
 	updateLabels();
 
-	ui->mainGraphicsView->fitInView(m_paintScene->sceneRect(), Qt::IgnoreAspectRatio);
+	ui->mainGraphicsView->fitInView(m_paintScene->sceneRect(), Qt::KeepAspectRatio);
 
 	updateDatasetObjectsList();
 
@@ -439,6 +442,8 @@ void MainWindow::on_actiondraw_triggered()
 
 void MainWindow::on_dataObjectList_clicked(QListWidgetItem* item)
 {
+	m_dataset->saveCurrent(m_paintScene->getData());
+
 	auto index = ui->datasetObjectsList->row(item);
 	m_dataset->setIndex(m_dataset->batchStart() + index);
 
@@ -448,7 +453,7 @@ void MainWindow::on_dataObjectList_clicked(QListWidgetItem* item)
 
 	updateLabels();
 
-	ui->mainGraphicsView->fitInView(m_paintScene->sceneRect(), Qt::IgnoreAspectRatio);
+	ui->mainGraphicsView->fitInView(m_paintScene->sceneRect(), Qt::KeepAspectRatio);
 
 	updatePreviousNextButton();
 }
