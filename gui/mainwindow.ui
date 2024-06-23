@@ -207,6 +207,9 @@
    <property name="text">
     <string>draw</string>
    </property>
+   <property name="shortcut">
+    <string>W</string>
+   </property>
   </action>
  </widget>
  <resources/>
