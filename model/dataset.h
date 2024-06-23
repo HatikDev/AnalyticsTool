@@ -313,7 +313,7 @@ private:
 		std::vector<Rect> rects;
 
 		std::string line;
-		uint8_t type;
+		std::string type;
 		float width, height;
 		float centerX, centerY;
 
@@ -323,11 +323,9 @@ private:
 			ss << line;
 			ss >> type >> centerX >> centerY >> width >> height;
 
-			type -= '0';
-
 			// TODO: change type by predefined class
-			auto name = m_classes.find(type)->second;
-			rects.push_back({ type, name, centerX, centerY, width, height });
+			auto name = m_classes.find(std::stoi(type))->second;
+			rects.push_back({ std::stoul(type), name, centerX, centerY, width, height });
 		}
 
 		return rects;

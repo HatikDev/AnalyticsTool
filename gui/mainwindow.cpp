@@ -213,15 +213,6 @@ void MainWindow::updateDatasetObjectsList()
 	ui->datasetObjectsList->setCurrentRow(selectedRow);
 }
 
-void MainWindow::saveCurrent()
-{
-	for (auto* item : m_paintScene->items())
-	{
-		auto* rect = dynamic_cast<Rectangle*>(item);
-
-	}
-}
-
 void MainWindow::on_actionLoadDataset_triggered()
 {
 	QString datasetPath = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
