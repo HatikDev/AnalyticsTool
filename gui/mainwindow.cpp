@@ -109,6 +109,12 @@ void MainWindow::loadDataset(const fs::path& path)
 	updateLabels();*/
 }
 
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+	if (m_dataset)
+		m_dataset->saveCurrent(m_paintScene->getData());
+}
+
 void MainWindow::updateLabels()
 {
 	size_t currentIndex = m_dataset->currentIndex();

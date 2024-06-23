@@ -26,6 +26,9 @@ public:
 
     void loadDataset(const std::filesystem::path& path);
 
+protected:
+    void closeEvent(QCloseEvent* event);
+
 private:
     Ui::MainWindow *ui;
 
