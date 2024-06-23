@@ -269,7 +269,11 @@ void MainWindow::on_rectAdded(Rectangle* rect, bool knownType)
 		rect->setCellType(cellType);
 		rect->setName(name);
 	}
-	catch (AnalyticsException& e) {}
+	catch (AnalyticsException& e) {
+		on_rectRemoved(rect);
+	}
+
+	on_selectModeButton_clicked();
 }
 
 void MainWindow::on_paintSceneRectSelected(Rectangle* rect)
@@ -308,6 +312,8 @@ void MainWindow::on_rectDoubleClicked(Rectangle* rect)
 		rect->setName(name);
 	}
 	catch (AnalyticsException& e) {}
+
+	on_selectModeButton_clicked();
 }
 
 void MainWindow::on_rectsList_doubleClicked(const QModelIndex& index)
