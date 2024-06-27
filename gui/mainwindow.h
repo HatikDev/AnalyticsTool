@@ -72,6 +72,9 @@ private slots:
     void on_selectModeButton_clicked();
     void on_drawModeButton_clicked();
     void on_saveButton_clicked();
+    void on_actionPrevious_image_triggered();
+    void on_actionNext_image_triggered();
+    void on_actionSave_triggered();
     void on_actionselect_triggered();
     void on_actiondraw_triggered();
     void on_dataObjectList_clicked(QListWidgetItem* item);

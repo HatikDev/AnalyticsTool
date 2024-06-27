@@ -189,11 +189,15 @@ void MainWindow::updatePreviousNextButton()
 	{
 		ui->prevButton->setEnabled(false);
 		ui->nextButton->setEnabled(false);
+		ui->actionPrevious_image->setEnabled(false);
+		ui->actionNext_image->setEnabled(false);
 		return;
 	}
 
 	ui->prevButton->setEnabled(m_dataset->hasPrevious());
 	ui->nextButton->setEnabled(m_dataset->hasNext());
+	ui->actionPrevious_image->setEnabled(m_dataset->hasPrevious());
+	ui->actionNext_image->setEnabled(m_dataset->hasNext());
 }
 
 void MainWindow::updateDatasetObjectsList()
@@ -295,6 +299,7 @@ void MainWindow::on_paintSceneEdited()
 		return;
 
 	ui->saveButton->setEnabled(true);
+	ui->actionSave->setEnabled(true);
 
 	setWindowTitle("Automatic Microscopic Bone Morrow*");
 }
@@ -445,6 +450,22 @@ void MainWindow::on_saveButton_clicked()
 	setWindowTitle("Automatic Microscopic Bone Morrow");
 
 	ui->saveButton->setEnabled(false);
+	ui->actionSave->setEnabled(false);
+}
+
+void MainWindow::on_actionPrevious_image_triggered()
+{
+	on_prevButton_clicked();
+}
+
+void MainWindow::on_actionNext_image_triggered()
+{
+	on_nextButton_clicked();
+}
+
+void MainWindow::on_actionSave_triggered()
+{
+	on_saveButton_clicked();
 }
 
 void MainWindow::on_actionselect_triggered()
