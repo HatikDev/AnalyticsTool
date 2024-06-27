@@ -79,6 +79,8 @@ void RectModel::deleteRect(Rectangle* rect)
 	beginRemoveRows(QModelIndex(), 0, m_rects.size() - 1);
 	m_rects.erase(rect->number());
 	endRemoveRows();
+
+	emit dataChanged(index(0), index(m_rects.size() - 1));
 }
 
 int RectModel::rowByRect(Rectangle* rect) const

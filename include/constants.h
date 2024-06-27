@@ -4,8 +4,6 @@
 #include <stddef.h>
 #include <QColor>
 
-const size_t kSelectionCircleRadius = 10;
-const size_t kLineWidth = 3;
 const QColor kDefaultRectColor = Qt::black;
 const size_t kDefaultType = 0;
 

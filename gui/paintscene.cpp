@@ -135,7 +135,8 @@ bool PaintScene::tryEditRect(const QGraphicsSceneMouseEvent& event)
 {
 	for (auto* rect : selectedItems()) {
 		auto boundingRect = rect->boundingRect();
-		if (distance(boundingRect.topLeft(), event.scenePos()) <= kSelectionCircleRadius) {
+		// TODO: replace by constant
+		if (distance(boundingRect.topLeft(), event.scenePos()) <= sceneRect().size().width() / 75) {
 			m_currentRect = static_cast<Rectangle*>(rect);
 			//m_currentRect->setFlag(QGraphicsItem::ItemIsMovable, false);
 			m_currentRect->setStartPoint(boundingRect.bottomRight());
@@ -144,7 +145,8 @@ bool PaintScene::tryEditRect(const QGraphicsSceneMouseEvent& event)
 			return true;
 		}
 
-		if (distance(boundingRect.topRight(), event.scenePos()) <= kSelectionCircleRadius) {
+		// TODO: replace by constant
+		if (distance(boundingRect.topRight(), event.scenePos()) <= sceneRect().size().width() / 75) {
 			m_currentRect = static_cast<Rectangle*>(rect);
 			//m_currentRect->setFlag(QGraphicsItem::ItemIsMovable, false);
 			m_currentRect->setStartPoint(boundingRect.bottomLeft());
@@ -153,7 +155,8 @@ bool PaintScene::tryEditRect(const QGraphicsSceneMouseEvent& event)
 			return true;
 		}
 
-		if (distance(boundingRect.bottomLeft(), event.scenePos()) <= kSelectionCircleRadius) {
+		// TODO: replace by constant
+		if (distance(boundingRect.bottomLeft(), event.scenePos()) <= sceneRect().size().width() / 75) {
 			m_currentRect = static_cast<Rectangle*>(rect);
 			//m_currentRect->setFlag(QGraphicsItem::ItemIsMovable, false);
 			m_currentRect->setStartPoint(boundingRect.topRight());
@@ -162,7 +165,8 @@ bool PaintScene::tryEditRect(const QGraphicsSceneMouseEvent& event)
 			return true;
 		}
 
-		if (distance(boundingRect.bottomRight(), event.scenePos()) <= kSelectionCircleRadius) {
+		// TODO: replace by constant
+		if (distance(boundingRect.bottomRight(), event.scenePos()) <= sceneRect().size().width() / 75) {
 			m_currentRect = static_cast<Rectangle*>(rect);
 			//m_currentRect->setFlag(QGraphicsItem::ItemIsMovable, false);
 			m_currentRect->setStartPoint(boundingRect.topLeft());
@@ -178,7 +182,9 @@ bool PaintScene::tryEditRect(const QGraphicsSceneMouseEvent& event)
 bool PaintScene::tryCreateLocalRect(const QGraphicsSceneMouseEvent& event)
 {
 	std::string name = "New rect " + std::to_string(counter++);
-	m_currentRect = new Rectangle(name, items().size(), event.scenePos(), 0); // TODO: change type
+
+	// TODO: change type & and replace by constant
+	m_currentRect = new Rectangle(name, items().size(), event.scenePos(), 0, sceneRect().size().width() / 240);
 	m_currentRect->setFlag(QGraphicsItem::ItemIsSelectable, true);
 	//m_currentRect->setFlag(QGraphicsItem::ItemIsMovable, true);
 
@@ -212,31 +218,33 @@ void PaintScene::loadData(IDataObject<BloodCellObj>& dataObject)
 	// here we should call dataObject.data() to get data from dataObject
 	// It's temporary realization
 
+	// clear all scene
+	reset();
+
 	// load image
 	auto& obj = dataObject.data();
 
 	fs::path path = obj.imgPath;
 	QImage image(path.u8string().c_str());
-	auto imageScaled = image.scaled({ 480, 480 }, Qt::KeepAspectRatio);
 
 	QGraphicsPixmapItem* pixmap = new QGraphicsPixmapItem;
-	pixmap->setPixmap(QPixmap::fromImage(imageScaled));
+	pixmap->setPixmap(QPixmap::fromImage(image));
 	pixmap->setPos(0, 0);
 	pixmap->setFlag(QGraphicsPixmapItem::ItemIsSelectable, false);
 
 	addItem(pixmap);
-	setSceneRect(QRect(QPoint(0, 0), imageScaled.size()));
+	setSceneRect(QRect(QPoint(0, 0), image.size()));
 
 	// load rects
 	auto pos = pixmap->pos();
 
-	auto sceneWidth = imageScaled.size().width();
-	auto sceneHeight = imageScaled.size().height();
+	auto sceneWidth = image.size().width();
+	auto sceneHeight = image.size().height();
 	for (auto& rect : obj.rects) {
 		QPointF p1 = { (rect.centerX - rect.w / 2) * sceneWidth, (rect.centerY - rect.h / 2) * sceneHeight };
 		QPointF p2 = { (rect.centerX + rect.w / 2) * sceneWidth, (rect.centerY + rect.h / 2) * sceneHeight };
 
-		auto* rectObj = new Rectangle(rect.name, counter++, p1, rect.type);
+		auto* rectObj = new Rectangle(rect.name, counter++, p1, rect.type, sceneWidth / 240);
 		rectObj->setEndPoint(p2);
 		rectObj->setFlag(QGraphicsItem::ItemIsSelectable, true);
 		addItem(rectObj);
@@ -253,8 +261,8 @@ BloodCellObj PaintScene::getData() const
 	BloodCellObj obj;
 	obj.rects.reserve(items().length());
 
-	auto sceneWidth = 480; // TODO: replace constant
-	auto sceneHeight = 480; // TODO: replace constant
+	auto sceneWidth = sceneRect().size().width(); // 480; // TODO: replace constant
+	auto sceneHeight = sceneRect().size().height(); // 480; // TODO: replace constant
 
 	for (auto* item : items())
 	{

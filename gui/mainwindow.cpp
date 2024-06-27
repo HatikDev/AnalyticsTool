@@ -91,24 +91,6 @@ void MainWindow::loadDataset(const fs::path& path)
 	updateDatasetObjectsList();
 
 	updatePreviousNextButton();
-
-	/*m_paintScene->reset();
-
-	try {
-		m_controller.loadDataset(path);
-	}
-	catch (const AnalyticsException& e) {
-		QMessageBox::critical(
-			this,
-			tr("Analytics Tool"),
-			tr("Dataset has invalid format"));
-
-		return;
-	}
-
-	loadImage(Model::instanse().dataset().current());
-
-	updateLabels();*/
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

@@ -12,7 +12,7 @@ class Rectangle : public QObject, public QGraphicsItem
     Q_INTERFACES(QGraphicsItem)
 
 public:
-    explicit Rectangle(std::string name, size_t number, QPointF point, uint8_t cellType, QObject* parent = 0);
+    explicit Rectangle(std::string name, size_t number, QPointF point, uint8_t cellType, size_t lineWidth, QObject* parent = 0);
     Rectangle(const Rectangle&) = delete;
     Rectangle(Rectangle&&) = delete;
     ~Rectangle();
@@ -54,17 +54,17 @@ signals:
 protected:
     std::string m_name;
 
+    bool m_isSelected = false;
+
+    size_t m_number;
+
     QPointF m_startPoint;
 
     QPointF m_endPoint;
 
-    bool m_isSelected = false;
-
-    //bool m_isVisible = true;
-
     size_t m_cellType;
 
-    size_t m_number;
+    const size_t kLineWidth;
 
     QRectF boundingRect() const;
 

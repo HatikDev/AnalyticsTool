@@ -8,11 +8,12 @@
 #include <QPalette>
 
 Rectangle::Rectangle(std::string name, size_t number, QPointF point,
-    uint8_t cellType, QObject* parent)
+    uint8_t cellType, size_t lineWidth, QObject* parent)
     : QObject(parent), QGraphicsItem()
     , m_name{ name }
     , m_number{ number }
     , m_cellType{ cellType }
+    , kLineWidth{ lineWidth }
 {
     setStartPoint(mapFromScene(point));
     setEndPoint(mapFromScene(point));
@@ -150,10 +151,11 @@ void Rectangle::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
         QPoint p4({ m_endPoint.toPoint().x(), m_endPoint.toPoint().y() });
 
         painter->setBrush(kDefaultRectColor);
-        painter->drawEllipse(p1, kSelectionCircleRadius, kSelectionCircleRadius);
-        painter->drawEllipse(p2, kSelectionCircleRadius, kSelectionCircleRadius);
-        painter->drawEllipse(p3, kSelectionCircleRadius, kSelectionCircleRadius);
-        painter->drawEllipse(p4, kSelectionCircleRadius, kSelectionCircleRadius);
+        auto ellipseRadius = 4 * kLineWidth; // TODO: replace by constant
+        painter->drawEllipse(p1, ellipseRadius, ellipseRadius);
+        painter->drawEllipse(p2, ellipseRadius, ellipseRadius);
+        painter->drawEllipse(p3, ellipseRadius, ellipseRadius);
+        painter->drawEllipse(p4, ellipseRadius, ellipseRadius);
     }
 
     Q_UNUSED(option)
