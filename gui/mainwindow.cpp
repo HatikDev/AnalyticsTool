@@ -24,6 +24,10 @@ MainWindow::MainWindow(QWidget* parent)
 {
 	ui->setupUi(this);
 
+	setWindowState(Qt::WindowMaximized);
+
+	loadIcons();
+
 	ui->rectsListView->setModel(m_rectModel);
 
 	connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
@@ -68,6 +72,19 @@ MainWindow::MainWindow(QWidget* parent)
 
 	//// connects for rects drawn by mouse
 	//connect(m_paintScene, &PaintScene::rectAdded, this, &MainWindow::on_rectAdded);
+
+	m_keyD = new QShortcut(this);
+	m_keyD->setKey(Qt::Key_D);
+
+	m_keyA = new QShortcut(this);
+	m_keyA->setKey(Qt::Key_A);
+
+	m_keyO = new QShortcut(this);
+	m_keyO->setKey(Qt::Key_O);
+
+	connect(m_keyD, &QShortcut::activated, this, &MainWindow::on_nextButton_clicked);
+	connect(m_keyA, &QShortcut::activated, this, &MainWindow::on_prevButton_clicked);
+	connect(m_keyO, &QShortcut::activated, this, &MainWindow::on_actionLoadDataset_triggered);
 }
 
 MainWindow::~MainWindow()
@@ -171,15 +188,11 @@ void MainWindow::updatePreviousNextButton()
 	{
 		ui->prevButton->setEnabled(false);
 		ui->nextButton->setEnabled(false);
-		ui->actionPrevious_image->setEnabled(false);
-		ui->actionNext_image->setEnabled(false);
 		return;
 	}
 
 	ui->prevButton->setEnabled(m_dataset->hasPrevious());
 	ui->nextButton->setEnabled(m_dataset->hasNext());
-	ui->actionPrevious_image->setEnabled(m_dataset->hasPrevious());
-	ui->actionNext_image->setEnabled(m_dataset->hasNext());
 }
 
 void MainWindow::updateDatasetObjectsList()
@@ -199,6 +212,30 @@ void MainWindow::updateDatasetObjectsList()
 
 	auto selectedRow = m_dataset->currentIndex() % m_dataset->batchSize();
 	ui->datasetObjectsList->setCurrentRow(selectedRow);
+}
+
+void MainWindow::loadIcons()
+{
+	ui->loadDatasetButton->setIcon(QIcon(QPixmap(":/open.png")));
+	ui->loadDatasetButton->setText(tr(""));
+
+	ui->drawMarkerButton->setIcon(QIcon(QPixmap(":/objects.png")));
+	ui->drawMarkerButton->setText(tr(""));
+
+	ui->saveMarkerButton->setIcon(QIcon(QPixmap(":/save.png")));
+	ui->saveMarkerButton->setText(tr(""));
+
+	ui->zoomInButton->setIcon(QIcon(QPixmap(":/zoom-in.png")));
+	ui->zoomInButton->setText(tr(""));
+
+	ui->zoomOutButton->setIcon(QIcon(QPixmap(":/zoom-out.png")));
+	ui->zoomOutButton->setText(tr(""));
+
+	ui->nextPushButton->setIcon(QIcon(QPixmap(":/next.png")));
+	ui->nextPushButton->setText(tr(""));
+
+	ui->prevPushButton->setIcon(QIcon(QPixmap(":/prev.png")));
+	ui->prevPushButton->setText(tr(""));
 }
 
 void MainWindow::on_actionLoadDataset_triggered()
@@ -281,7 +318,7 @@ void MainWindow::on_paintSceneEdited()
 		return;
 
 	ui->saveButton->setEnabled(true);
-	ui->actionSave->setEnabled(true);
+	ui->saveMarkerButton->setEnabled(true);
 
 	setWindowTitle("Automatic Microscopic Bone Morrow*");
 }
@@ -319,7 +356,7 @@ void MainWindow::on_rectDoubleClicked(Rectangle* rect)
 
 void MainWindow::on_rectsList_doubleClicked(const QModelIndex& index)
 {
-	if (!m_dataset || m_paintScene->mode() != PaintMode::draw)
+	if (!m_dataset)
 		return;
 
 	try {
@@ -343,6 +380,8 @@ void MainWindow::on_rectRemoved(Rectangle* rect)
 	// TODO: add handles of removing rects
 	m_rectModel->deleteRect(rect);
 	delete rect;
+
+	on_selectModeButton_clicked();
 }
 
 void MainWindow::provideContextMenu(const QPoint& pos)
@@ -364,6 +403,12 @@ void MainWindow::provideContextMenu(const QPoint& pos)
 
 void MainWindow::on_prevButton_clicked()
 {
+	if (!m_dataset)
+		return;
+
+	if (!m_dataset->hasPrevious())
+		return;
+
 	m_dataset->saveCurrent(m_paintScene->getData());
 
 	m_dataset->previous();
@@ -383,6 +428,12 @@ void MainWindow::on_prevButton_clicked()
 
 void MainWindow::on_nextButton_clicked()
 {
+	if (!m_dataset)
+		return;
+
+	if (!m_dataset->hasNext())
+		return;
+
 	m_dataset->saveCurrent(m_paintScene->getData());
 
 	m_dataset->next();
@@ -432,22 +483,6 @@ void MainWindow::on_saveButton_clicked()
 	setWindowTitle("Automatic Microscopic Bone Morrow");
 
 	ui->saveButton->setEnabled(false);
-	ui->actionSave->setEnabled(false);
-}
-
-void MainWindow::on_actionPrevious_image_triggered()
-{
-	on_prevButton_clicked();
-}
-
-void MainWindow::on_actionNext_image_triggered()
-{
-	on_nextButton_clicked();
-}
-
-void MainWindow::on_actionSave_triggered()
-{
-	on_saveButton_clicked();
 }
 
 void MainWindow::on_actionselect_triggered()
@@ -536,4 +571,39 @@ void MainWindow::listWidgetItemChanged(QListWidgetItem* item)
 		Model::instanse().picture().rectByNumber(index)->show();
 	else
 		Model::instanse().picture().rectByNumber(index)->hide();*/
+}
+
+void MainWindow::on_zoomInButton_clicked()
+{
+	ui->mainGraphicsView->scale(1.1, 1.1);
+}
+
+void MainWindow::on_zoomOutButton_clicked()
+{
+	ui->mainGraphicsView->scale(1 / 1.1, 1 / 1.1);
+}
+
+void MainWindow::on_loadDatasetButton_clicked()
+{
+	on_actionLoadDataset_triggered();
+}
+
+void MainWindow::on_drawMarkerButton_clicked()
+{
+	on_drawModeButton_clicked();
+}
+
+void MainWindow::on_nextPushButton_clicked()
+{
+	on_nextButton_clicked();
+}
+
+void MainWindow::on_prevPushButton_clicked()
+{
+	on_prevButton_clicked();
+}
+
+void MainWindow::on_saveMarkerButton_clicked()
+{
+	on_saveButton_clicked();
 }

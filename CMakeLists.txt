@@ -54,6 +54,8 @@ set(PROJECT_SOURCES
 qt_add_executable(${PROJECT_NAME}
 	MANUAL_FINALIZATION
 	${PROJECT_SOURCES}
+        icons/res.qrc
+
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
