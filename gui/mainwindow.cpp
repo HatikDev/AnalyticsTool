@@ -39,6 +39,8 @@ MainWindow::MainWindow(QWidget* parent)
 
 	connect(m_paintScene, &PaintScene::rectCategorySelected, this, &MainWindow::on_rectDoubleClicked);
 
+	connect(m_paintScene, &PaintScene::edited, this, &MainWindow::on_paintSceneEdited);
+
 	connect(m_paintScene, &PaintScene::rectRemove, this, &MainWindow::on_rectRemoved);
 
 	connect(ui->datasetObjectsList, &QListWidget::itemClicked, this, &MainWindow::on_dataObjectList_clicked);
@@ -224,7 +226,9 @@ void MainWindow::on_actionLoadDataset_triggered()
 		return;
 
 	try {
-		loadDataset(datasetPath.toStdString());
+		auto bytes = datasetPath.toUtf8();
+		std::u8string u8Path(bytes.begin(), bytes.end());
+		loadDataset(u8Path);
 	}
 	catch (const AnalyticsException& exception)
 	{
@@ -283,6 +287,16 @@ void MainWindow::on_paintSceneRectSelected(Rectangle* rect)
 
 	auto* model = ui->rectsListView->selectionModel();
 	model->select(selected, QItemSelectionModel::ClearAndSelect);
+}
+
+void MainWindow::on_paintSceneEdited()
+{
+	if (!m_dataset)
+		return;
+
+	ui->saveButton->setEnabled(true);
+
+	setWindowTitle("Automatic Microscopic Bone Morrow*");
 }
 
 void MainWindow::on_rectsListSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
@@ -419,6 +433,18 @@ void MainWindow::on_drawModeButton_clicked()
 	ui->drawModeButton->setChecked(true);
 
 	m_paintScene->setMode(PaintMode::draw);
+}
+
+void MainWindow::on_saveButton_clicked()
+{
+	if (!m_dataset)
+		return;
+
+	m_dataset->saveCurrent(m_paintScene->getData());
+
+	setWindowTitle("Automatic Microscopic Bone Morrow");
+
+	ui->saveButton->setEnabled(false);
 }
 
 void MainWindow::on_actionselect_triggered()

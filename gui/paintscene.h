@@ -46,6 +46,7 @@ signals:
     void rectSelected(Rectangle* rect);
     void rectDeselected(Rectangle* rect);
     void rectCategorySelected(Rectangle* rect);
+    void edited();
     void rectRemove(Rectangle* rect); // TODO: add deleting rect
 
 private:

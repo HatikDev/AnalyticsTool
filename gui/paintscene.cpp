@@ -74,6 +74,7 @@ void PaintScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
 	tryCreateLocalRect(*event);
 	m_mouseState = MouseState::creating;
+	emit edited();
 }
 
 void PaintScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
@@ -84,6 +85,8 @@ void PaintScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 		return;
 
 	m_currentRect->setEndPoint(event->scenePos());
+
+	emit edited();
 
 	update();
 }
@@ -106,6 +109,8 @@ void PaintScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
 	m_mouseState = MouseState::released;
 
+	emit edited();
+
 	update();
 }
 
@@ -121,8 +126,8 @@ void PaintScene::keyPressEvent(QKeyEvent* keyEvent)
 		if (items.size() == 0)
 			return;
 
+		emit edited();
 		emit rectRemove(static_cast<Rectangle*>(items.at(0)));
-		//removeItem(items.at(0));
 	}
 }
 
@@ -135,6 +140,7 @@ bool PaintScene::tryEditRect(const QGraphicsSceneMouseEvent& event)
 			//m_currentRect->setFlag(QGraphicsItem::ItemIsMovable, false);
 			m_currentRect->setStartPoint(boundingRect.bottomRight());
 			m_currentRect->setEndPoint(boundingRect.topLeft());
+			emit edited();
 			return true;
 		}
 
@@ -143,6 +149,7 @@ bool PaintScene::tryEditRect(const QGraphicsSceneMouseEvent& event)
 			//m_currentRect->setFlag(QGraphicsItem::ItemIsMovable, false);
 			m_currentRect->setStartPoint(boundingRect.bottomLeft());
 			m_currentRect->setEndPoint(boundingRect.topRight());
+			emit edited();
 			return true;
 		}
 
@@ -151,6 +158,7 @@ bool PaintScene::tryEditRect(const QGraphicsSceneMouseEvent& event)
 			//m_currentRect->setFlag(QGraphicsItem::ItemIsMovable, false);
 			m_currentRect->setStartPoint(boundingRect.topRight());
 			m_currentRect->setEndPoint(boundingRect.bottomLeft());
+			emit edited();
 			return true;
 		}
 
@@ -159,6 +167,7 @@ bool PaintScene::tryEditRect(const QGraphicsSceneMouseEvent& event)
 			//m_currentRect->setFlag(QGraphicsItem::ItemIsMovable, false);
 			m_currentRect->setStartPoint(boundingRect.topLeft());
 			m_currentRect->setEndPoint(boundingRect.bottomRight());
+			emit edited();
 			return true;
 		}
 	}
@@ -194,6 +203,7 @@ void PaintScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
 			continue;
 
 		emit rectCategorySelected(rect);
+		emit edited();
 	}
 }
 
@@ -206,7 +216,7 @@ void PaintScene::loadData(IDataObject<BloodCellObj>& dataObject)
 	auto& obj = dataObject.data();
 
 	fs::path path = obj.imgPath;
-	QImage image(path.string().c_str());
+	QImage image(path.u8string().c_str());
 	auto imageScaled = image.scaled({ 480, 480 }, Qt::KeepAspectRatio);
 
 	QGraphicsPixmapItem* pixmap = new QGraphicsPixmapItem;
@@ -231,6 +241,7 @@ void PaintScene::loadData(IDataObject<BloodCellObj>& dataObject)
 		rectObj->setFlag(QGraphicsItem::ItemIsSelectable, true);
 		addItem(rectObj);
 
+		emit edited();
 		emit rectAdded(rectObj, true);
 	}
 
